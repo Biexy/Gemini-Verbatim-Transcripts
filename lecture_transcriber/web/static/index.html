@@ -2891,10 +2891,32 @@
       });
       const added = res.added ?? (res.jobs ? res.jobs.length : 0);
       const skipped = res.skipped ?? 0;
-      const errors = res.errors ? res.errors.length : 0;
-      toast(`تمت إضافة ${added} محاضرة${skipped ? ` · تخطي ${skipped}` : ""}${errors ? ` · أخطاء ${errors}` : ""}`, added > 0 ? "info" : "warn");
-      $("urlsInput").value = "";
-      updateUrlCounter();
+      const skippedDup = res.skipped_duplicates ?? 0;
+      const skippedExist = res.skipped_existing ?? 0;
+      const errList = Array.isArray(res.errors) ? res.errors : [];
+      const errors = errList.length;
+
+      const reasons = [];
+      if (skippedDup > 0) reasons.push(skippedDup === 1 ? "مكرر في القائمة" : `${skippedDup} مكررة في القائمة`);
+      if (skippedExist > 0) reasons.push(skippedExist === 1 ? "ملف التفريغ مكتمل مسبقاً على القرص" : `${skippedExist} مكتملة مسبقاً على القرص`);
+      if (skipped > 0 && skippedDup === 0 && skippedExist === 0) reasons.push(`تخطي ${skipped}`);
+      if (errors > 0) reasons.push(errors === 1 ? `خطأ: ${errList[0]}` : `${errors} أخطاء`);
+
+      let msg = "";
+      if (added > 0) {
+        msg = `تمت إضافة ${added} محاضرة${reasons.length ? ` (${reasons.join(" · ")})` : ""}`;
+        toast(msg, "ok");
+        $("urlsInput").value = "";
+        updateUrlCounter();
+      } else if (errors > 0 && skipped === 0) {
+        toast(`تعذر تحليل الرابط: ${errList[0]}`, "err");
+      } else if (skippedDup === 1 && skippedExist === 0 && errors === 0) {
+        toast("هذا الرابط مضاف مسبقاً في نفس المادة — اضغط زر الإعادة بجانبه إذا أردت إعادة تفريغه", "warn");
+      } else if (skippedExist === 1 && skippedDup === 0 && errors === 0) {
+        toast("ملف التفريغ لهذه المحاضرة مكتمل ومحفوظ مسبقاً على جهازك", "warn");
+      } else {
+        toast(`لم تُضف محاضرات جديدة${reasons.length ? ` — ${reasons.join(" · ")}` : ""}`, "warn");
+      }
       await loadState();
     } catch (err) {
       toast(`تعذر إضافة الروابط: ${err.message}`, "err");
