@@ -53,7 +53,26 @@ flowchart LR
 
 ## 🚀 Quick Start
 
-### 1. Prerequisites
+### ⚡ One-Command Install *(Recommended — Auto-installs Python, FFmpeg, isolated `.venv`, & Desktop Shortcut)*
+
+**Windows (PowerShell):**
+```powershell
+irm https://raw.githubusercontent.com/Biexy/Gemini-Verbatim-Transcripts/main/install.ps1 | iex
+```
+
+**macOS / Linux:**
+```bash
+curl -fsSL https://raw.githubusercontent.com/Biexy/Gemini-Verbatim-Transcripts/main/install.sh | bash
+```
+
+> Works even without Git installed. Re-running the same command updates the app in-place while preserving your config & database.  
+> After installing, launch anytime via `gemini-transcribe` in any terminal or the **Desktop shortcut**!
+
+---
+
+### 🛠️ Manual Installation
+
+#### 1. Prerequisites
 - **Python 3.10+**
 - **FFmpeg & FFprobe** installed and available in `PATH`:
   - Windows: `winget install Gyan.FFmpeg` (or `choco install ffmpeg`)
@@ -61,7 +80,7 @@ flowchart LR
   - Ubuntu/Debian: `sudo apt install ffmpeg`
 - **Google Gemini API Key** — free key from [Google AI Studio](https://aistudio.google.com/apikey)
 
-### 2. Install Minimal Dependencies
+#### 2. Install Minimal Dependencies
 Only 3 lightweight packages (`yt-dlp`, `google-genai`, `requests`):
 
 ```bash
@@ -70,7 +89,7 @@ cd Gemini-Verbatim-Transcripts
 pip install -r requirements.txt
 ```
 
-### 3. Launch the Local Web Dashboard
+#### 3. Launch the Local Web Dashboard
 - **Windows (1-Click)**: Double-click **`Launch_Transcriber.bat`**
 - **Any OS (Terminal)**:
   ```bash
@@ -78,7 +97,7 @@ pip install -r requirements.txt
   ```
   Opens automatically at `http://127.0.0.1:8765`. Click **الإعدادات (Settings)** to paste your Gemini API key (or set the `GEMINI_API_KEY` environment variable) and pick your output directory.
 
-### 4. Headless CLI Mode
+#### 4. Headless CLI Mode
 ```bash
 # Transcribe YouTube videos/playlists and Google Drive files/folders directly
 python run.py --cli --course "Embedded_Systems" --mode eco \
