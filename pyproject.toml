@@ -1,0 +1,50 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gemini-verbatim-transcripts"
+version = "1.0.0"
+description = "Lightweight, outage-resilient YouTube & Google Drive audio lecture downloader and verbatim AI transcriber for NotebookLM powered by Google Gemini."
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+authors = [
+    {name = "Biexy"}
+]
+keywords = ["youtube", "google-drive", "gemini", "transcription", "verbatim", "notebooklm", "arabic", "lectures", "yt-dlp", "ffmpeg"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Education",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Multimedia :: Sound/Audio :: Speech",
+    "Topic :: Education",
+]
+dependencies = [
+    "yt-dlp>=2024.10.0",
+    "google-genai>=1.0.0",
+    "requests>=2.31.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/Biexy/Gemini-Verbatim-Transcripts"
+Repository = "https://github.com/Biexy/Gemini-Verbatim-Transcripts"
+Issues = "https://github.com/Biexy/Gemini-Verbatim-Transcripts/issues"
+
+[project.scripts]
+gemini-transcribe = "lecture_transcriber.run:main"
+gemini-transcribe-cli = "lecture_transcriber.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["lecture_transcriber*"]
+exclude = ["lecture_transcriber.tests*", "lecture_transcriber.data*"]
+
+[tool.setuptools.package-data]
+"lecture_transcriber.web" = ["static/*.html"]

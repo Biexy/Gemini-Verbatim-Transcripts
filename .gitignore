@@ -1,0 +1,47 @@
+# Runtime state, secrets, & temp audio
+lecture_transcriber/data/
+data/
+*.db
+*.db-wal
+*.db-shm
+config.json
+.env
+.env.*
+
+# Downloaded/converted audio & transcripts
+*.mp3
+*.m4a
+*.mp4
+*.mkv
+*.webm
+*.wav
+*.ogg
+*.opus
+*.part
+*.part-Frag*
+*.ytdl
+*.temp
+Transcripts/
+
+# Python artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+.eggs/
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# OS & IDE files
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.log
