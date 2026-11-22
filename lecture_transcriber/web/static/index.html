@@ -3,206 +3,220 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>مُفرِّغ المحاضرات الذكي — Lecture Transcriber</title>
+<title>Gemini Verbatim — مُفرِّغ المحاضرات</title>
 <style>
   :root {
-    --bg: #0b1120;
-    --bg-elev: #111827;
-    --card: #151f32;
-    --card-hover: #1b2840;
-    --border: rgba(148, 163, 184, 0.14);
-    --border-strong: rgba(148, 163, 184, 0.28);
-    --text: #f1f5f9;
-    --text-muted: #94a3b8;
-    --text-dim: #64748b;
-    --primary: #38bdf8;
-    --primary-strong: #0284c7;
-    --primary-glow: rgba(56, 189, 248, 0.22);
-    --accent: #818cf8;
-    --success: #34d399;
-    --success-bg: rgba(52, 211, 153, 0.12);
-    --warn: #fbbf24;
-    --warn-bg: rgba(251, 191, 36, 0.13);
-    --danger: #f87171;
-    --danger-bg: rgba(248, 113, 113, 0.13);
-    --yt: #ef4444;
-    --yt-bg: rgba(239, 68, 68, 0.15);
-    --drive: #22c55e;
-    --drive-bg: rgba(34, 197, 94, 0.15);
-    --radius: 14px;
-    --radius-sm: 9px;
-    --shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+    --bg: #09090b;
+    --surface: #111114;
+    --surface-2: #16161a;
+    --surface-hover: #1c1c22;
+    --input-bg: #0c0c0f;
+    --border: rgba(255, 255, 255, 0.08);
+    --border-strong: rgba(255, 255, 255, 0.15);
+    --border-focus: rgba(255, 255, 255, 0.34);
+
+    --text: #f4f4f5;
+    --text-secondary: #a1a1aa;
+    --text-muted: #71717a;
+
+    --btn-primary-bg: #f4f4f5;
+    --btn-primary-text: #09090b;
+    --btn-primary-hover: #ffffff;
+
+    --accent: #3b82f6;
+    --accent-soft: rgba(59, 130, 246, 0.14);
+    --success: #22c55e;
+    --success-soft: rgba(34, 197, 94, 0.12);
+    --warn: #eab308;
+    --warn-soft: rgba(234, 179, 8, 0.12);
+    --danger: #ef4444;
+    --danger-soft: rgba(239, 68, 68, 0.12);
+
+    --radius: 10px;
+    --radius-sm: 7px;
+    --radius-xs: 5px;
+    --shadow-modal: 0 24px 64px rgba(0, 0, 0, 0.72), 0 0 0 1px rgba(255, 255, 255, 0.08);
   }
 
   * { box-sizing: border-box; }
   html, body {
     margin: 0;
     padding: 0;
-    background: radial-gradient(circle at 80% 0%, #172554 0%, var(--bg) 42%), var(--bg);
+    background: var(--bg);
     color: var(--text);
-    font-family: "Segoe UI", "Tahoma", "Noto Sans Arabic", system-ui, -apple-system, sans-serif;
-    line-height: 1.55;
+    font-family: "Segoe UI", "IBM Plex Sans Arabic", "Noto Sans Arabic", system-ui, -apple-system, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
     min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
   }
 
-  a { color: var(--primary); text-decoration: none; }
-  a:hover { text-decoration: underline; }
+  a { color: inherit; text-decoration: none; }
   button, input, textarea, select { font-family: inherit; }
 
   .ltr { direction: ltr; unicode-bidi: embed; }
-  .mono { font-family: "Cascadia Code", "Consolas", "Courier New", monospace; }
+  .mono {
+    font-family: "Cascadia Code", "JetBrains Mono", "Consolas", ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+  }
+  .tabular { font-variant-numeric: tabular-nums; }
+  .icon {
+    width: 15px;
+    height: 15px;
+    flex-shrink: 0;
+    display: inline-block;
+    vertical-align: -2px;
+  }
+  .icon-sm { width: 13px; height: 13px; }
 
-  /* Header */
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 99px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.22); }
+
+  /* Top Utility Header */
   header {
     position: sticky;
     top: 0;
     z-index: 40;
-    backdrop-filter: blur(12px);
-    background: rgba(11, 17, 32, 0.85);
+    background: rgba(9, 9, 11, 0.88);
+    backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--border);
   }
   .header-inner {
-    max-width: 1240px;
+    max-width: 1400px;
     margin: 0 auto;
-    padding: 14px 20px;
+    height: 54px;
+    padding: 0 20px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 14px;
-    flex-wrap: wrap;
+    gap: 16px;
   }
   .brand {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
+    min-width: 0;
   }
-  .brand-logo {
-    width: 40px;
-    height: 40px;
-    border-radius: 12px;
-    background: linear-gradient(135deg, var(--primary), var(--accent));
+  .brand-mark {
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
+    background: var(--surface-2);
+    border: 1px solid var(--border-strong);
     display: grid;
     place-items: center;
-    font-size: 20px;
-    box-shadow: 0 0 24px var(--primary-glow);
+    color: var(--text);
     flex-shrink: 0;
+  }
+  .brand-text {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    min-width: 0;
   }
   .brand h1 {
     margin: 0;
-    font-size: 1.15rem;
-    font-weight: 700;
+    font-size: 0.95rem;
+    font-weight: 600;
     letter-spacing: -0.01em;
+    white-space: nowrap;
   }
-  .brand small {
-    display: block;
+  .brand-sub {
     color: var(--text-muted);
     font-size: 0.78rem;
+    white-space: nowrap;
+  }
+  @media (max-width: 720px) {
+    .brand-sub { display: none; }
   }
 
-  .header-status {
+  .header-right {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     flex-wrap: wrap;
   }
 
-  .pill {
+  .status-item {
     display: inline-flex;
     align-items: center;
-    gap: 7px;
-    padding: 6px 12px;
-    border-radius: 999px;
-    font-size: 0.82rem;
-    font-weight: 600;
-    border: 1px solid var(--border);
-    background: var(--card);
-    color: var(--text);
-  }
-  .pill.ok {
-    background: var(--success-bg);
-    border-color: rgba(52, 211, 153, 0.35);
-    color: var(--success);
-  }
-  .pill.warn {
-    background: var(--warn-bg);
-    border-color: rgba(251, 191, 36, 0.4);
-    color: var(--warn);
-  }
-  .pill.err {
-    background: var(--danger-bg);
-    border-color: rgba(248, 113, 113, 0.4);
-    color: var(--danger);
-  }
-  .mode-pill {
-    padding: 4px 10px;
     gap: 6px;
+    padding: 4px 10px;
+    border-radius: var(--radius-xs);
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    background: transparent;
+    border: 1px solid transparent;
   }
-  .mode-pill.mode-eco {
-    background: var(--success-bg);
-    border-color: rgba(52, 211, 153, 0.35);
-    color: var(--success);
+  .status-item.ok .status-dot { background: var(--success); }
+  .status-item.warn {
+    color: #fde047;
+    background: var(--warn-soft);
+    border-color: rgba(234, 179, 8, 0.25);
   }
-  .mode-pill.mode-balanced {
-    background: rgba(56, 189, 248, 0.14);
-    border-color: rgba(56, 189, 248, 0.38);
-    color: var(--primary);
+  .status-item.warn .status-dot { background: var(--warn); }
+  .status-item.err {
+    color: #fca5a5;
+    background: var(--danger-soft);
+    border-color: rgba(239, 68, 68, 0.28);
   }
-  .mode-pill.mode-strict_audio {
-    background: var(--warn-bg);
-    border-color: rgba(251, 191, 36, 0.4);
-    color: var(--warn);
+  .status-item.err .status-dot { background: var(--danger); }
+
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--text-muted);
+    flex-shrink: 0;
+  }
+
+  .divider-v {
+    width: 1px;
+    height: 18px;
+    background: var(--border);
+    margin: 0 2px;
+  }
+
+  .mode-control {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 30px;
+    padding: 0 9px;
+    border-radius: var(--radius-xs);
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text-secondary);
+    font-size: 0.78rem;
+    transition: border-color 0.15s;
+  }
+  .mode-control:hover { border-color: var(--border-strong); }
+  .mode-control.mode-eco .mode-indicator { background: var(--success); }
+  .mode-control.mode-balanced .mode-indicator { background: var(--accent); }
+  .mode-control.mode-strict_audio .mode-indicator { background: var(--warn); }
+  .mode-indicator {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
   }
   .mode-select {
     background: transparent;
     border: none;
-    color: inherit;
-    font-size: 0.81rem;
-    font-weight: 700;
+    color: var(--text);
+    font-size: 0.78rem;
+    font-weight: 500;
     cursor: pointer;
     outline: none;
-    padding: 2px 0;
+    padding: 0;
   }
   .mode-select option {
-    background: var(--bg-elev);
+    background: var(--surface);
     color: var(--text);
-  }
-  .toggle-card {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    padding: 11px 13px;
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--border-strong);
-    background: #0b1222;
-    cursor: pointer;
-  }
-  .toggle-card input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
-    margin-top: 2px;
-    accent-color: var(--primary);
-    cursor: pointer;
-    flex-shrink: 0;
-  }
-  .toggle-card strong {
-    display: block;
-    font-size: 0.88rem;
-    color: var(--text);
-  }
-  .dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: currentColor;
-  }
-  .dot.pulse {
-    box-shadow: 0 0 0 0 currentColor;
-    animation: pulse 1.8s infinite;
-  }
-  @keyframes pulse {
-    0% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.55); }
-    70% { box-shadow: 0 0 0 8px rgba(52, 211, 153, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); }
   }
 
   /* Buttons */
@@ -210,483 +224,703 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 7px;
-    padding: 8px 15px;
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--border-strong);
-    background: var(--card);
+    gap: 6px;
+    height: 32px;
+    padding: 0 12px;
+    border-radius: var(--radius-xs);
+    border: 1px solid var(--border);
+    background: var(--surface);
     color: var(--text);
-    font-size: 0.86rem;
-    font-weight: 600;
+    font-size: 0.81rem;
+    font-weight: 500;
     cursor: pointer;
-    transition: all 0.16s ease;
+    transition: background 0.12s, border-color 0.12s, color 0.12s;
     white-space: nowrap;
   }
   .btn:hover:not(:disabled) {
-    background: var(--card-hover);
-    border-color: var(--primary);
-    transform: translateY(-1px);
+    background: var(--surface-hover);
+    border-color: var(--border-strong);
   }
+  .btn:active:not(:disabled) { transform: scale(0.99); }
   .btn:disabled {
-    opacity: 0.48;
+    opacity: 0.45;
     cursor: not-allowed;
-    transform: none;
   }
   .btn-primary {
-    background: linear-gradient(135deg, #0ea5e9, #6366f1);
-    border-color: transparent;
-    color: #fff;
-    box-shadow: 0 6px 20px rgba(14, 165, 233, 0.25);
+    background: var(--btn-primary-bg);
+    border-color: var(--btn-primary-bg);
+    color: var(--btn-primary-text);
+    font-weight: 600;
   }
   .btn-primary:hover:not(:disabled) {
-    filter: brightness(1.08);
-    background: linear-gradient(135deg, #0ea5e9, #6366f1);
+    background: var(--btn-primary-hover);
+    border-color: var(--btn-primary-hover);
+  }
+  .btn-ghost {
+    background: transparent;
     border-color: transparent;
+    color: var(--text-secondary);
   }
-  .btn-success {
-    background: var(--success-bg);
-    border-color: rgba(52, 211, 153, 0.35);
-    color: var(--success);
+  .btn-ghost:hover:not(:disabled) {
+    background: var(--surface-hover);
+    border-color: transparent;
+    color: var(--text);
   }
-  .btn-warn {
-    background: var(--warn-bg);
-    border-color: rgba(251, 191, 36, 0.38);
-    color: var(--warn);
+  .btn-danger-ghost {
+    background: transparent;
+    border-color: transparent;
+    color: var(--text-muted);
   }
-  .btn-danger {
-    background: var(--danger-bg);
-    border-color: rgba(248, 113, 113, 0.38);
-    color: var(--danger);
+  .btn-danger-ghost:hover:not(:disabled) {
+    background: var(--danger-soft);
+    color: #fca5a5;
   }
   .btn-sm {
-    padding: 5px 10px;
-    font-size: 0.78rem;
-    border-radius: 7px;
+    height: 27px;
+    padding: 0 9px;
+    font-size: 0.76rem;
+  }
+  .btn-icon {
+    width: 28px;
+    height: 28px;
+    padding: 0;
   }
 
-  /* Layout */
-  main {
-    max-width: 1240px;
-    margin: 0 auto;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
+  /* Alert Banner */
+  .banner-wrap {
+    max-width: 1400px;
+    margin: 14px auto 0;
+    padding: 0 20px;
   }
-
   .banner {
-    padding: 12px 16px;
+    padding: 10px 14px;
     border-radius: var(--radius-sm);
-    border: 1px solid rgba(251, 191, 36, 0.4);
-    background: var(--warn-bg);
-    color: #fde68a;
+    border: 1px solid rgba(234, 179, 8, 0.3);
+    background: var(--warn-soft);
+    color: #fef08a;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
     flex-wrap: wrap;
-    font-size: 0.9rem;
+    font-size: 0.84rem;
   }
   .banner.hidden { display: none; }
+  .banner-msg { display: flex; align-items: center; gap: 8px; }
 
-  .panel {
-    background: var(--bg-elev);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 18px;
-    box-shadow: var(--shadow);
-  }
-  .panel-title {
-    margin: 0 0 14px 0;
-    font-size: 1rem;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-  }
-
-  /* Quick Add Form */
-  .add-grid {
+  /* Two-Column Workspace Layout */
+  main {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 18px 20px 32px;
     display: grid;
-    grid-template-columns: 280px 1fr;
-    gap: 14px;
+    grid-template-columns: 344px minmax(0, 1fr);
+    gap: 18px;
     align-items: start;
   }
-  @media (max-width: 820px) {
-    .add-grid { grid-template-columns: 1fr; }
-  }
-  .field label {
-    display: block;
-    font-size: 0.84rem;
-    font-weight: 600;
-    color: var(--text-muted);
-    margin-bottom: 6px;
-  }
-  .input, .textarea, .select {
-    width: 100%;
-    padding: 10px 12px;
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--border-strong);
-    background: #0b1222;
-    color: var(--text);
-    font-size: 0.92rem;
-    outline: none;
-    transition: border-color 0.15s, box-shadow 0.15s;
-  }
-  .input:focus, .textarea:focus, .select:focus {
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px var(--primary-glow);
-  }
-  .textarea {
-    min-height: 112px;
-    resize: vertical;
-    line-height: 1.5;
-  }
-  .add-actions {
-    margin-top: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-  .hint {
-    font-size: 0.78rem;
-    color: var(--text-dim);
+  @media (max-width: 980px) {
+    main {
+      grid-template-columns: 1fr;
+    }
   }
 
-  /* Stats Grid */
-  .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 12px;
-  }
-  @media (max-width: 860px) {
-    .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  }
-  .stat-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 12px 14px;
+  .sidebar {
+    position: sticky;
+    top: 72px;
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 14px;
   }
-  .stat-label { font-size: 0.78rem; color: var(--text-muted); }
-  .stat-val { font-size: 1.5rem; font-weight: 800; line-height: 1.2; }
-  .stat-card.done .stat-val { color: var(--success); }
-  .stat-card.active .stat-val { color: var(--primary); }
-  .stat-card.queued .stat-val { color: var(--accent); }
-  .stat-card.failed .stat-val { color: var(--danger); }
+  @media (max-width: 980px) {
+    .sidebar { position: static; }
+  }
 
-  /* Controls bar */
-  .controls-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    flex-wrap: wrap;
-    margin-bottom: 14px;
-  }
-  .filters {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
-  .filters .select {
-    width: auto;
-    min-width: 170px;
-    padding: 7px 10px;
-    font-size: 0.85rem;
-  }
-  .chip {
-    padding: 6px 11px;
-    border-radius: 999px;
+  .panel {
+    background: var(--surface);
     border: 1px solid var(--border);
-    background: var(--card);
-    color: var(--text-muted);
-    font-size: 0.8rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: 0.15s;
-  }
-  .chip.active, .chip:hover {
-    border-color: var(--primary);
-    color: var(--text);
-    background: rgba(56, 189, 248, 0.14);
-  }
-  .bulk-actions {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
-
-  /* Job cards */
-  .jobs-list {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  .empty-state {
-    text-align: center;
-    padding: 44px 20px;
-    color: var(--text-muted);
-    border: 1px dashed var(--border-strong);
     border-radius: var(--radius);
-    background: rgba(15, 23, 42, 0.45);
-  }
-  .empty-state strong { display: block; color: var(--text); margin-bottom: 6px; font-size: 1rem; }
-
-  .job-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 14px 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    transition: border-color 0.15s, background 0.15s;
-  }
-  .job-card:hover {
-    border-color: var(--border-strong);
-    background: var(--card-hover);
-  }
-  .job-card.status-done { border-right: 4px solid var(--success); }
-  .job-card.status-failed { border-right: 4px solid var(--danger); }
-  .job-card.status-paused { border-right: 4px solid var(--warn); }
-  .job-card.status-active { border-right: 4px solid var(--primary); }
-  .job-card.status-queued { border-right: 4px solid var(--accent); }
-  .job-card.status-cancelled { border-right: 4px solid var(--text-dim); opacity: 0.78; }
-
-  .job-top {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-  .job-title-wrap {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
-    min-width: 0;
-    flex: 1;
-  }
-  .job-seq {
-    font-size: 0.75rem;
-    color: var(--text-dim);
-    background: rgba(148, 163, 184, 0.1);
-    padding: 2px 7px;
-    border-radius: 6px;
-  }
-  .job-title {
-    font-weight: 700;
-    font-size: 0.96rem;
-    color: var(--text);
-    word-break: break-word;
-  }
-  .job-course-tag {
-    font-size: 0.74rem;
-    color: var(--text-muted);
-    background: rgba(99, 102, 241, 0.14);
-    border: 1px solid rgba(99, 102, 241, 0.28);
-    padding: 2px 8px;
-    border-radius: 999px;
-  }
-
-  .badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    padding: 3px 9px;
-    border-radius: 999px;
-    font-size: 0.74rem;
-    font-weight: 700;
-    white-space: nowrap;
-  }
-  .badge-yt { background: var(--yt-bg); color: #fca5a5; border: 1px solid rgba(239,68,68,0.35); }
-  .badge-drive { background: var(--drive-bg); color: #86efac; border: 1px solid rgba(34,197,94,0.35); }
-  .badge-stage-queued { background: rgba(129, 140, 248, 0.16); color: #c7d2fe; }
-  .badge-stage-downloading { background: rgba(56, 189, 248, 0.18); color: #7dd3fc; }
-  .badge-stage-converting { background: rgba(244, 114, 182, 0.16); color: #f9a8d4; }
-  .badge-stage-transcribing { background: rgba(167, 139, 250, 0.2); color: #ddd6fe; }
-  .badge-stage-cleaning { background: rgba(45, 212, 191, 0.18); color: #99f6e4; }
-  .badge-stage-done { background: var(--success-bg); color: var(--success); }
-  .badge-stage-paused { background: var(--warn-bg); color: var(--warn); }
-  .badge-stage-failed { background: var(--danger-bg); color: var(--danger); }
-  .badge-stage-cancelled { background: rgba(100, 116, 139, 0.2); color: #cbd5e1; }
-
-  /* Progress bar */
-  .progress-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .progress-track {
-    flex: 1;
-    height: 8px;
-    border-radius: 999px;
-    background: rgba(148, 163, 184, 0.15);
     overflow: hidden;
   }
-  .progress-fill {
-    height: 100%;
-    border-radius: 999px;
-    background: linear-gradient(90deg, var(--primary), var(--accent));
-    transition: width 0.35s ease;
-    width: 0%;
-  }
-  .progress-fill.done { background: linear-gradient(90deg, #10b981, #34d399); }
-  .progress-fill.failed { background: var(--danger); }
-  .progress-fill.paused { background: var(--warn); }
-  .progress-fill.active-stripe {
-    background-image: linear-gradient(90deg, #0ea5e9, #818cf8, #38bdf8);
-    background-size: 200% 100%;
-    animation: shimmer 2.2s linear infinite;
-  }
-  @keyframes shimmer {
-    0% { background-position: 100% 0; }
-    100% { background-position: -100% 0; }
-  }
-  .progress-pct {
-    font-size: 0.78rem;
-    font-weight: 700;
-    color: var(--text-muted);
-    min-width: 42px;
-    text-align: left;
-  }
-
-  .job-meta-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    flex-wrap: wrap;
-    font-size: 0.79rem;
-    color: var(--text-muted);
-  }
-  .job-metrics {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-  .metric { display: inline-flex; align-items: center; gap: 5px; }
-  .job-actions {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    flex-wrap: wrap;
-  }
-
-  .job-error {
-    background: var(--danger-bg);
-    border: 1px solid rgba(248, 113, 113, 0.3);
-    color: #fecaca;
-    padding: 8px 11px;
-    border-radius: 8px;
-    font-size: 0.8rem;
-    word-break: break-word;
-  }
-
-  /* Logs collapsible */
-  details.logs-panel {
-    background: var(--bg-elev);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 12px 16px;
-  }
-  details.logs-panel summary {
-    cursor: pointer;
-    font-weight: 700;
-    font-size: 0.9rem;
-    color: var(--text-muted);
-    user-select: none;
-  }
-  .log-box {
-    margin-top: 10px;
-    background: #070b14;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 10px 12px;
-    max-height: 220px;
-    overflow-y: auto;
-    font-size: 0.78rem;
-    color: #cbd5e1;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-  .log-line { display: flex; gap: 8px; align-items: baseline; }
-  .log-time { color: var(--text-dim); flex-shrink: 0; }
-  .log-lvl-error { color: var(--danger); }
-  .log-lvl-warning { color: var(--warn); }
-
-  /* Modals */
-  .modal-backdrop {
-    position: fixed;
-    inset: 0;
-    background: rgba(2, 6, 23, 0.75);
-    backdrop-filter: blur(4px);
-    z-index: 100;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    padding: 16px;
-  }
-  .modal-backdrop.open { display: flex; }
-  .modal {
-    width: 100%;
-    max-width: 640px;
-    max-height: 90vh;
-    background: var(--bg-elev);
-    border: 1px solid var(--border-strong);
-    border-radius: var(--radius);
-    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-  }
-  .modal.modal-lg { max-width: 920px; }
-  .modal-header {
-    padding: 15px 18px;
+  .panel-header {
+    padding: 12px 15px;
     border-bottom: 1px solid var(--border);
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 10px;
   }
-  .modal-header h2 { margin: 0; font-size: 1.05rem; }
+  .panel-title {
+    margin: 0;
+    font-size: 0.86rem;
+    font-weight: 600;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .panel-body {
+    padding: 15px;
+  }
+
+  /* Form controls */
+  .stack { display: flex; flex-direction: column; gap: 12px; }
+  .field label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 5px;
+  }
+  .input, .textarea, .select {
+    width: 100%;
+    padding: 8px 10px;
+    border-radius: var(--radius-xs);
+    border: 1px solid var(--border);
+    background: var(--input-bg);
+    color: var(--text);
+    font-size: 0.84rem;
+    outline: none;
+    transition: border-color 0.14s;
+  }
+  .input:hover, .textarea:hover, .select:hover { border-color: var(--border-strong); }
+  .input:focus, .textarea:focus, .select:focus { border-color: var(--border-focus); }
+  .input::placeholder, .textarea::placeholder { color: var(--text-muted); }
+  .textarea {
+    min-height: 150px;
+    resize: vertical;
+    line-height: 1.55;
+  }
+  .hint {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    line-height: 1.45;
+  }
+  .url-count-tag {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .url-count-tag.has-urls { color: var(--text-secondary); }
+
+  .composer-footer {
+    padding: 11px 15px;
+    border-top: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.015);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .btn-full { width: 100%; height: 36px; }
+
+  /* Compact Logs in Sidebar */
+  details.logs-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  details.logs-panel summary {
+    padding: 11px 15px;
+    cursor: pointer;
+    font-size: 0.81rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    user-select: none;
+  }
+  details.logs-panel summary::-webkit-details-marker { display: none; }
+  details.logs-panel summary:hover { color: var(--text); }
+  .log-count-pill {
+    font-size: 0.72rem;
+    padding: 1px 7px;
+    border-radius: 99px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+  }
+  .log-box {
+    border-top: 1px solid var(--border);
+    background: var(--input-bg);
+    padding: 10px 12px;
+    max-height: 220px;
+    overflow-y: auto;
+    font-size: 0.74rem;
+    color: var(--text-secondary);
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .log-line { display: flex; gap: 7px; align-items: baseline; line-height: 1.4; }
+  .log-time { color: var(--text-muted); flex-shrink: 0; font-size: 0.71rem; }
+  .log-lvl-error { color: #fca5a5; }
+  .log-lvl-warning { color: #fde047; }
+
+  /* Queue Main Column */
+  .queue-column {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 0;
+  }
+
+  /* Compact Inline Summary Strip + Toolbar */
+  .queue-toolbar {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .toolbar-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .kpi-strip {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+  .kpi-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .kpi-val {
+    font-weight: 600;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+  }
+  .kpi-item.done .kpi-val { color: var(--success); }
+  .kpi-item.active .kpi-val { color: var(--accent); }
+  .kpi-item.failed .kpi-val { color: var(--danger); }
+
+  .toolbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .toolbar-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+  }
+  .segmented {
+    display: inline-flex;
+    align-items: center;
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xs);
+    padding: 2px;
+    gap: 2px;
+  }
+  .chip {
+    padding: 4px 10px;
+    border-radius: 4px;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 0.77rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.12s, color 0.12s;
+  }
+  .chip:hover { color: var(--text); }
+  .chip.active {
+    background: var(--surface-hover);
+    color: var(--text);
+  }
+  .course-select {
+    width: auto;
+    min-width: 190px;
+    height: 30px;
+    padding: 0 10px;
+    font-size: 0.8rem;
+  }
+
+  /* Dense Pro Queue List */
+  .jobs-container {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .jobs-list {
+    display: flex;
+    flex-direction: column;
+  }
+  .empty-state {
+    text-align: center;
+    padding: 64px 24px;
+    color: var(--text-muted);
+  }
+  .empty-icon {
+    width: 36px;
+    height: 36px;
+    margin: 0 auto 12px;
+    border-radius: 9px;
+    border: 1px solid var(--border);
+    background: var(--surface-2);
+    display: grid;
+    place-items: center;
+    color: var(--text-secondary);
+  }
+  .empty-state strong {
+    display: block;
+    color: var(--text);
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .empty-state p {
+    margin: 0;
+    font-size: 0.81rem;
+    color: var(--text-muted);
+  }
+
+  .job-row {
+    padding: 12px 15px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: background 0.12s;
+  }
+  .job-row:last-child { border-bottom: none; }
+  .job-row:hover { background: rgba(255, 255, 255, 0.02); }
+  .job-row.status-cancelled { opacity: 0.58; }
+
+  .job-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .job-identity {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    flex: 1;
+  }
+  .job-seq {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    min-width: 28px;
+  }
+  .source-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 0.69rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    border: 1px solid var(--border);
+    background: var(--surface-2);
+    color: var(--text-secondary);
+    flex-shrink: 0;
+  }
+  .source-tag.yt { color: #f87171; border-color: rgba(239, 68, 68, 0.25); background: rgba(239, 68, 68, 0.08); }
+  .source-tag.drive { color: #4ade80; border-color: rgba(34, 197, 94, 0.25); background: rgba(34, 197, 94, 0.08); }
+
+  .job-title {
+    font-size: 0.87rem;
+    font-weight: 500;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .job-title:hover { text-decoration: underline; text-underline-offset: 3px; }
+  .job-course-tag {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .job-course-tag::before { content: "·"; margin-left: 6px; color: var(--border-strong); }
+
+  .job-status-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .stage-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+  }
+  .stage-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--text-muted);
+  }
+  .stage-downloading .stage-dot,
+  .stage-converting .stage-dot,
+  .stage-transcribing .stage-dot,
+  .stage-cleaning .stage-dot { background: var(--accent); }
+  .stage-downloading,
+  .stage-converting,
+  .stage-transcribing,
+  .stage-cleaning { color: #93c5fd; }
+  .stage-done .stage-dot { background: var(--success); }
+  .stage-done { color: #86efac; }
+  .stage-paused .stage-dot { background: var(--warn); }
+  .stage-paused { color: #fde047; }
+  .stage-failed .stage-dot { background: var(--danger); }
+  .stage-failed { color: #fca5a5; }
+
+  .job-pct {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    min-width: 34px;
+    text-align: left;
+  }
+
+  /* Hairline 3px Progress Bar */
+  .progress-track {
+    width: 100%;
+    height: 3px;
+    border-radius: 99px;
+    background: rgba(255, 255, 255, 0.06);
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 99px;
+    background: var(--accent);
+    transition: width 0.28s ease;
+    width: 0%;
+  }
+  .progress-fill.done { background: var(--success); }
+  .progress-fill.failed { background: var(--danger); }
+  .progress-fill.paused { background: var(--warn); }
+  .progress-fill.queued { background: rgba(255, 255, 255, 0.22); }
+
+  .job-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .job-metrics {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+  .metric-sep { color: var(--border-strong); }
+  .job-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .job-error {
+    background: var(--danger-soft);
+    border: 1px solid rgba(239, 68, 68, 0.24);
+    color: #fca5a5;
+    padding: 7px 10px;
+    border-radius: var(--radius-xs);
+    font-size: 0.77rem;
+    word-break: break-word;
+    display: flex;
+    align-items: flex-start;
+    gap: 7px;
+  }
+
+  /* Modals */
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.72);
+    backdrop-filter: blur(4px);
+    z-index: 100;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal-backdrop.open { display: flex; }
+  .modal {
+    width: 100%;
+    max-width: 600px;
+    max-height: 88vh;
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-modal);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .modal.modal-lg { max-width: 900px; }
+  .modal-header {
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .modal-header h2 {
+    margin: 0;
+    font-size: 0.94rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+  }
   .modal-body {
     padding: 18px;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 16px;
   }
   .modal-footer {
-    padding: 13px 18px;
+    padding: 12px 18px;
     border-top: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.015);
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    gap: 10px;
+    gap: 8px;
+  }
+
+  .settings-section {
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+  }
+  .settings-section + .settings-section {
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+  }
+  .section-label {
+    font-size: 0.73rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
   }
   .form-row-2 {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 12px;
   }
-  @media (max-width: 600px) {
+  @media (max-width: 560px) {
     .form-row-2 { grid-template-columns: 1fr; }
   }
 
-  /* Transcript Preview */
+  /* Custom Switch Toggle */
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 10px 12px;
+    border-radius: var(--radius-xs);
+    border: 1px solid var(--border);
+    background: var(--input-bg);
+    cursor: pointer;
+  }
+  .toggle-row strong {
+    display: block;
+    font-size: 0.83rem;
+    font-weight: 500;
+    color: var(--text);
+  }
+  .switch {
+    position: relative;
+    width: 36px;
+    height: 20px;
+    flex-shrink: 0;
+  }
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
+  }
+  .switch-track {
+    position: absolute;
+    inset: 0;
+    border-radius: 99px;
+    background: #27272a;
+    border: 1px solid var(--border-strong);
+    transition: background 0.16s, border-color 0.16s;
+  }
+  .switch-track::after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #a1a1aa;
+    transition: transform 0.16s, background 0.16s;
+  }
+  .switch input:checked + .switch-track {
+    background: var(--btn-primary-bg);
+    border-color: var(--btn-primary-bg);
+  }
+  .switch input:checked + .switch-track::after {
+    transform: translateX(-16px);
+    background: var(--btn-primary-text);
+  }
+
+  /* Transcript Reader */
+  .saved-strip {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding: 8px 12px;
+    border-radius: var(--radius-xs);
+    border: 1px solid rgba(34, 197, 94, 0.24);
+    background: var(--success-soft);
+    color: #86efac;
+    font-size: 0.78rem;
+  }
+  .saved-strip-left { display: inline-flex; align-items: center; gap: 6px; }
+  .saved-path {
+    color: var(--text-secondary);
+    font-size: 0.73rem;
+    word-break: break-all;
+  }
   .transcript-toolbar {
     display: flex;
     align-items: center;
@@ -694,36 +928,51 @@
     gap: 10px;
     flex-wrap: wrap;
   }
+  .transcript-search {
+    width: 220px;
+    height: 29px;
+    padding: 0 9px;
+    font-size: 0.78rem;
+  }
   .transcript-view {
-    background: #0a101f;
+    background: var(--input-bg);
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
-    padding: 18px;
-    max-height: 60vh;
+    padding: 20px 22px;
+    max-height: 58vh;
     overflow-y: auto;
-    line-height: 1.85;
-    font-size: 0.96rem;
+    line-height: 1.9;
+    font-size: 0.93rem;
     white-space: pre-wrap;
     word-break: break-word;
+    color: #e4e4e7;
   }
   .transcript-view h1, .transcript-view h2, .transcript-view h3 {
-    color: var(--primary);
+    color: var(--text);
+    font-weight: 600;
     margin: 14px 0 8px;
   }
   .ts-badge {
     display: inline-block;
-    padding: 1px 7px;
-    border-radius: 6px;
-    background: rgba(56, 189, 248, 0.14);
-    color: var(--primary);
-    font-size: 0.82rem;
-    font-weight: 700;
+    padding: 0 6px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    font-size: 0.76rem;
+    font-family: "Cascadia Code", "Consolas", monospace;
     margin-left: 6px;
     direction: ltr;
     unicode-bidi: embed;
   }
+  mark.hl {
+    background: rgba(234, 179, 8, 0.28);
+    color: #fef08a;
+    border-radius: 3px;
+    padding: 0 2px;
+  }
 
-  /* Toast */
+  /* Toasts */
   .toast-wrap {
     position: fixed;
     bottom: 18px;
@@ -732,24 +981,34 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
-    max-width: 380px;
+    max-width: 360px;
   }
   .toast {
-    background: #1e293b;
+    background: var(--surface-2);
     border: 1px solid var(--border-strong);
-    border-right: 4px solid var(--primary);
     color: var(--text);
-    padding: 11px 14px;
-    border-radius: 10px;
-    box-shadow: var(--shadow);
-    font-size: 0.86rem;
-    animation: slideIn 0.2s ease;
+    padding: 10px 13px;
+    border-radius: var(--radius-sm);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55);
+    font-size: 0.81rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    animation: fadeUp 0.16s ease;
   }
-  .toast.ok { border-right-color: var(--success); }
-  .toast.err { border-right-color: var(--danger); }
-  .toast.warn { border-right-color: var(--warn); }
-  @keyframes slideIn {
-    from { opacity: 0; transform: translateY(10px); }
+  .toast::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
+  }
+  .toast.ok::before { background: var(--success); }
+  .toast.err::before { background: var(--danger); }
+  .toast.warn::before { background: var(--warn); }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(6px); }
     to { opacity: 1; transform: translateY(0); }
   }
 </style>
@@ -759,215 +1018,290 @@
 <header>
   <div class="header-inner">
     <div class="brand">
-      <div class="brand-logo" aria-hidden="true">🎙️</div>
-      <div>
-        <h1>مُفرِّغ المحاضرات الذكي</h1>
-        <small>YouTube &amp; Google Drive → Gemini Verbatim Transcripts</small>
+      <div class="brand-mark" aria-hidden="true">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+          <path d="M4 12h2M8 7v10M12 4v16M16 8v8M20 12h-2"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <h1>Gemini Verbatim</h1>
+        <span class="brand-sub">YouTube &amp; Google Drive</span>
       </div>
     </div>
 
-    <div class="header-status">
-      <span id="netBadge" class="pill ok" title="حالة الاتصال بالإنترنت">
-        <span class="dot pulse"></span>
-        <span id="netText">متصل بالإنترنت</span>
+    <div class="header-right">
+      <span id="netBadge" class="status-item ok" title="حالة الاتصال بالإنترنت">
+        <span class="status-dot"></span>
+        <span id="netText">متصل</span>
       </span>
 
-      <span id="ffmpegBadge" class="pill" title="حالة أداة FFmpeg لمعالجة الصوت">
-        <span class="dot"></span>
-        <span id="ffmpegText">FFmpeg...</span>
+      <span id="ffmpegBadge" class="status-item" title="حالة أداة FFmpeg لمعالجة الصوت">
+        <span class="status-dot"></span>
+        <span id="ffmpegText">FFmpeg</span>
       </span>
 
-      <span id="sseBadge" class="pill" title="حالة الاتصال المباشر بالخادم المحلي" style="display:none;">
-        <span class="dot"></span>
+      <span id="sseBadge" class="status-item warn" title="إعادة الاتصال بالخادم المحلي" style="display:none;">
+        <span class="status-dot"></span>
         <span>إعادة الاتصال...</span>
       </span>
 
-      <label class="pill mode-pill mode-eco" id="quickModePill" title="تبديل سريع لوضع توفير البيانات">
-        <span>⚡</span>
+      <span class="divider-v" aria-hidden="true"></span>
+
+      <label class="mode-control mode-eco" id="quickModePill" title="وضع التوفير (Download Mode)">
+        <span class="mode-indicator"></span>
         <select id="quickModeSelect" class="mode-select" aria-label="وضع التوفير (Download Mode)">
-          <option value="eco">توفير أقصى (Eco)</option>
-          <option value="balanced">متوازن (Balanced)</option>
-          <option value="strict_audio">صوت فقط صارم (Strict)</option>
+          <option value="eco">Eco — توفير أقصى</option>
+          <option value="balanced">Balanced — متوازن</option>
+          <option value="strict_audio">Strict — صوت فقط</option>
         </select>
       </label>
 
-      <button class="btn" id="openSettingsBtn" type="button">⚙️ الإعدادات</button>
+      <button class="btn" id="openSettingsBtn" type="button">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9c.26.604.852.997 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+        <span>الإعدادات</span>
+      </button>
     </div>
   </div>
 </header>
 
-<main>
-  <!-- Missing API key or offline notice -->
+<div class="banner-wrap">
   <div id="apiKeyBanner" class="banner hidden">
-    <span>⚠️ لم يتم ضبط مفتاح <strong>Gemini API Key</strong> بعد — أضفه من الإعدادات لبدء التفريغ التلقائي.</span>
-    <button class="btn btn-warn btn-sm" id="bannerSettingsBtn" type="button">إضافة المفتاح الآن</button>
+    <span class="banner-msg">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+        <line x1="12" y1="9" x2="12" y2="13"/>
+        <line x1="12" y1="17" x2="12.01" y2="17"/>
+      </svg>
+      <span>مفتاح <strong>Gemini API Key</strong> غير مضبوط — أضفه من الإعدادات للبدء.</span>
+    </span>
+    <button class="btn btn-sm" id="bannerSettingsBtn" type="button">إضافة المفتاح</button>
   </div>
+</div>
 
-  <!-- Quick Add Panel -->
-  <section class="panel" aria-label="إضافة محاضرات جديدة">
-    <h2 class="panel-title">
-      <span>➕ إضافة روابط المحاضرات (YouTube / Google Drive)</span>
-      <span class="hint">يدعم الفيديوهات، قوائم التشغيل Playlists، ملفات ومجلدات Google Drive</span>
-    </h2>
-    <form id="enqueueForm">
-      <div class="add-grid">
-        <div class="field">
-          <label for="courseInput">اسم المادة / المجلد</label>
-          <input id="courseInput" class="input" list="courseSuggestions" placeholder="مثال: علوم القرآن - المحاضرات" required />
-          <datalist id="courseSuggestions"></datalist>
-          <div class="hint" style="margin-top:8px;">
-            سيتم حفظ كل محاضرة كملف <span class="mono">.md</span> بالإضافة إلى ملف موحّد لـ NotebookLM وتقرير ملخص.
+<main>
+  <!-- Left/Start Sidebar: Add Queue + Logs -->
+  <aside class="sidebar">
+    <section class="panel" aria-label="إضافة محاضرات جديدة">
+      <div class="panel-header">
+        <h2 class="panel-title">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+            <line x1="12" y1="5" x2="12" y2="19"/>
+            <line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          <span>إضافة محاضرات</span>
+        </h2>
+        <span class="hint">YouTube · Drive</span>
+      </div>
+
+      <form id="enqueueForm">
+        <div class="panel-body stack">
+          <div class="field">
+            <label for="courseInput">اسم المادة / المجلد</label>
+            <input id="courseInput" class="input" list="courseSuggestions" placeholder="مثال: المتحكم الدقيق" required />
+            <datalist id="courseSuggestions"></datalist>
+          </div>
+
+          <div class="field">
+            <label for="urlsInput">
+              <span>الروابط (رابط لكل سطر)</span>
+              <span id="urlCountTag" class="url-count-tag">0 روابط</span>
+            </label>
+            <textarea id="urlsInput" class="textarea ltr mono" placeholder="https://www.youtube.com/watch?v=...&#10;https://www.youtube.com/playlist?list=...&#10;https://drive.google.com/file/d/.../view&#10;https://drive.google.com/drive/folders/..." required></textarea>
           </div>
         </div>
-        <div class="field">
-          <label for="urlsInput">الروابط (رابط واحد في كل سطر)</label>
-          <textarea id="urlsInput" class="textarea ltr mono" placeholder="https://www.youtube.com/watch?v=...&#10;https://www.youtube.com/playlist?list=...&#10;https://drive.google.com/file/d/.../view&#10;https://drive.google.com/drive/folders/..." required></textarea>
+
+        <div class="composer-footer">
+          <button id="enqueueBtn" class="btn btn-primary btn-full" type="submit">إضافة وبدء التفريغ</button>
+          <span id="enqueueStatus" class="hint">
+            <span id="modeSummaryHint">وضع التوفير: Eco</span>
+          </span>
+        </div>
+      </form>
+    </section>
+
+    <details class="logs-panel">
+      <summary>
+        <span style="display:inline-flex;align-items:center;gap:7px;">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="4 17 10 11 4 5"/>
+            <line x1="12" y1="19" x2="20" y2="19"/>
+          </svg>
+          <span>سجل الأحداث المباشر</span>
+        </span>
+        <span id="logCount" class="log-count-pill mono">0</span>
+      </summary>
+      <div id="logBox" class="log-box"></div>
+    </details>
+  </aside>
+
+  <!-- Main Column: Queue Toolbar + Dense List -->
+  <section class="queue-column" aria-label="قائمة المهام والمحاضرات">
+    <div class="queue-toolbar">
+      <div class="toolbar-top">
+        <div class="kpi-strip" aria-label="ملخص الإحصائيات">
+          <span class="kpi-item">الإجمالي <span class="kpi-val" id="statTotal">0</span></span>
+          <span class="kpi-item done">مكتمل <span class="kpi-val" id="statDone">0</span></span>
+          <span class="kpi-item active">نشط <span class="kpi-val" id="statActive">0</span></span>
+          <span class="kpi-item">انتظار <span class="kpi-val" id="statQueued">0</span></span>
+          <span class="kpi-item failed">أخطاء <span class="kpi-val" id="statFailed">0</span></span>
+        </div>
+
+        <div class="toolbar-actions">
+          <button class="btn btn-sm" id="pauseAllBtn" type="button" title="إيقاف الكل مؤقتاً">
+            <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round">
+              <rect x="6" y="4" width="4" height="16" rx="1"/>
+              <rect x="14" y="4" width="4" height="16" rx="1"/>
+            </svg>
+            <span>إيقاف الكل</span>
+          </button>
+          <button class="btn btn-sm" id="resumeAllBtn" type="button" title="استئناف جميع المهام">
+            <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="6 4 20 12 6 20 6 4"/>
+            </svg>
+            <span>استئناف</span>
+          </button>
+          <button class="btn btn-sm" id="openFolderBtn" type="button" title="فتح مجلد التفريغات">
+            <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+            </svg>
+            <span>فتح المجلد</span>
+          </button>
         </div>
       </div>
-      <div class="add-actions">
-        <span id="enqueueStatus" class="hint">
-          الاستكمال التلقائي مُفعَّل • <span id="modeSummaryHint">وضع التوفير: توفير أقصى (Eco)</span>
-        </span>
-        <button id="enqueueBtn" class="btn btn-primary" type="submit">🚀 إضافة وبدء التفريغ</button>
-      </div>
-    </form>
-  </section>
 
-  <!-- Stats -->
-  <section class="stats-grid" aria-label="ملخص الإحصائيات">
-    <div class="stat-card">
-      <span class="stat-label">الإجمالي</span>
-      <span class="stat-val" id="statTotal">0</span>
-    </div>
-    <div class="stat-card done">
-      <span class="stat-label">مكتمل</span>
-      <span class="stat-val" id="statDone">0</span>
-    </div>
-    <div class="stat-card active">
-      <span class="stat-label">قيد العمل</span>
-      <span class="stat-val" id="statActive">0</span>
-    </div>
-    <div class="stat-card queued">
-      <span class="stat-label">في الانتظار / متوقف</span>
-      <span class="stat-val" id="statQueued">0</span>
-    </div>
-    <div class="stat-card failed">
-      <span class="stat-label">أخطاء</span>
-      <span class="stat-val" id="statFailed">0</span>
-    </div>
-  </section>
+      <div class="toolbar-bottom">
+        <div class="segmented" role="tablist" aria-label="تصفية الحالة">
+          <button class="chip active" data-status="all" type="button">الكل</button>
+          <button class="chip" data-status="active" type="button">نشط</button>
+          <button class="chip" data-status="done" type="button">مكتمل</button>
+          <button class="chip" data-status="paused" type="button">متوقف</button>
+          <button class="chip" data-status="failed" type="button">أخطاء</button>
+        </div>
 
-  <!-- Queue & Courses View -->
-  <section class="panel" aria-label="قائمة المهام والمحاضرات">
-    <div class="controls-bar">
-      <div class="filters">
-        <select id="courseFilter" class="select" aria-label="تصفية حسب المادة">
+        <select id="courseFilter" class="select course-select" aria-label="تصفية حسب المادة">
           <option value="all">كل المواد</option>
         </select>
-        <button class="chip active" data-status="all" type="button">الكل</button>
-        <button class="chip" data-status="active" type="button">نشط</button>
-        <button class="chip" data-status="done" type="button">مكتمل</button>
-        <button class="chip" data-status="paused" type="button">متوقف</button>
-        <button class="chip" data-status="failed" type="button">أخطاء</button>
-      </div>
-
-      <div class="bulk-actions">
-        <button class="btn btn-warn btn-sm" id="pauseAllBtn" type="button">⏸️ إيقاف الكل مؤقتاً</button>
-        <button class="btn btn-success btn-sm" id="resumeAllBtn" type="button">▶️ استئناف الكل</button>
-        <button class="btn btn-sm" id="openFolderBtn" type="button">📂 فتح مجلد الملفات</button>
       </div>
     </div>
 
-    <div id="jobsList" class="jobs-list">
-      <div class="empty-state">
-        <strong>لا توجد محاضرات في القائمة بعد</strong>
-        الصق روابط YouTube أو Google Drive في الأعلى واضغط «إضافة وبدء التفريغ».
+    <div class="jobs-container">
+      <div id="jobsList" class="jobs-list">
+        <div class="empty-state">
+          <div class="empty-icon">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+            </svg>
+          </div>
+          <strong>لا توجد محاضرات في القائمة بعد</strong>
+          <p>أدخل اسم المادة والصق روابط YouTube أو Google Drive في اللوحة الجانبية للبدء.</p>
+        </div>
       </div>
     </div>
   </section>
-
-  <!-- Live Logs -->
-  <details class="logs-panel">
-    <summary>📋 سجل الأحداث المباشر (<span id="logCount">0</span>)</summary>
-    <div id="logBox" class="log-box"></div>
-  </details>
 </main>
 
 <!-- Settings Modal -->
 <div id="settingsModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
   <div class="modal">
     <div class="modal-header">
-      <h2 id="settingsTitle">⚙️ إعدادات التطبيق</h2>
-      <button class="btn btn-sm" data-close="settingsModal" type="button">✕</button>
+      <h2 id="settingsTitle">الإعدادات</h2>
+      <button class="btn btn-ghost btn-icon" data-close="settingsModal" type="button" aria-label="إغلاق">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
     </div>
+
     <form id="settingsForm">
       <div class="modal-body">
-        <div class="field">
-          <label for="cfgApiKey">Gemini API Key <span id="apiKeyHint" class="hint"></span></label>
-          <input id="cfgApiKey" type="password" class="input ltr mono" placeholder="اتركه فارغاً للاحتفاظ بالمفتاح الحالي أو الصق مفتاحاً جديداً..." autocomplete="off" />
-        </div>
-
-        <div class="field">
-          <label for="cfgOutputDir">مجلد حفظ التفريغات (Output Directory)</label>
-          <input id="cfgOutputDir" type="text" class="input ltr mono" required />
-        </div>
-
-        <div class="form-row-2">
+        <div class="settings-section">
+          <div class="section-label">الحساب والتخزين</div>
           <div class="field">
-            <label for="cfgDownloadWorkers">عدد التحميلات المتزامنة</label>
-            <input id="cfgDownloadWorkers" type="number" min="1" max="10" class="input ltr" required />
+            <label for="cfgApiKey">
+              <span>Gemini API Key</span>
+              <span id="apiKeyHint" class="hint mono ltr"></span>
+            </label>
+            <input id="cfgApiKey" type="password" class="input ltr mono" placeholder="اتركه فارغاً للاحتفاظ بالمفتاح الحالي..." autocomplete="off" />
           </div>
           <div class="field">
-            <label for="cfgTranscribeWorkers">عدد التفريغات المتزامنة</label>
-            <input id="cfgTranscribeWorkers" type="number" min="1" max="8" class="input ltr" required />
+            <label for="cfgOutputDir">مجلد حفظ التفريغات (Output Directory)</label>
+            <input id="cfgOutputDir" type="text" class="input ltr mono" required />
           </div>
         </div>
 
-        <div class="field">
-          <label for="cfgDownloadMode">وضع التوفير (Download Mode)</label>
-          <select id="cfgDownloadMode" class="select">
-            <option value="eco">توفير أقصى (Eco) — صوت فقط خفيف 32k + رفع مباشر بدون إعادة ترميز</option>
-            <option value="balanced">متوازن (Balanced) — صوت أوضح 64k مع بديل فيديو طارئ عند الحاجة</option>
-            <option value="strict_audio">صوت فقط صارم (Strict Audio) — يوتيوب صوت فقط حصرياً بدون تحميل فيديو أبداً</option>
-          </select>
-        </div>
-
-        <div class="form-row-2">
+        <div class="settings-section">
+          <div class="section-label">التحميل وتوفير البيانات</div>
           <div class="field">
-            <label for="cfgBitrate">جودة الصوت (Audio Bitrate)</label>
-            <select id="cfgBitrate" class="select ltr">
-              <option value="32k">32k (توفير أقصى — ~14MB/ساعة)</option>
-              <option value="48k">48k (أصغر حجم — مناسب للنت البطيء)</option>
-              <option value="64k">64k (تلقائي 32k في Eco / 64k في Balanced)</option>
-              <option value="96k">96k (جودة عالية)</option>
-              <option value="128k">128k (جودة فائقة)</option>
+            <label for="cfgDownloadMode">وضع التوفير (Download Mode)</label>
+            <select id="cfgDownloadMode" class="select">
+              <option value="eco">توفير أقصى (Eco) — صوت خفيف 32k ورفع مباشر بدون إعادة ترميز</option>
+              <option value="balanced">متوازن (Balanced) — صوت 64k مع بديل طارئ عند الحاجة</option>
+              <option value="strict_audio">صوت فقط صارم (Strict Audio) — رفض تحميل أي فيديو MP4</option>
             </select>
           </div>
-          <div class="field">
-            <label for="cfgProxy">البروكسي (اختياري — HTTP/SOCKS5)</label>
-            <input id="cfgProxy" type="text" class="input ltr mono" placeholder="http://127.0.0.1:7890" />
+
+          <div class="form-row-2">
+            <div class="field">
+              <label for="cfgBitrate">جودة الصوت (Bitrate)</label>
+              <select id="cfgBitrate" class="select ltr">
+                <option value="32k">32k (~14 MB/hr)</option>
+                <option value="48k">48k (~21 MB/hr)</option>
+                <option value="64k">64k (32k Eco / 64k Balanced)</option>
+                <option value="96k">96k</option>
+                <option value="128k">128k</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="cfgProxy">البروكسي (اختياري)</label>
+              <input id="cfgProxy" type="text" class="input ltr mono" placeholder="http://127.0.0.1:7890" />
+            </div>
           </div>
+
+          <div class="form-row-2">
+            <div class="field">
+              <label for="cfgDownloadWorkers">عمال التحميل المتزامنون</label>
+              <input id="cfgDownloadWorkers" type="number" min="1" max="10" class="input ltr mono" required />
+            </div>
+            <div class="field">
+              <label for="cfgTranscribeWorkers">عمال التفريغ (1 للـ Free Tier)</label>
+              <input id="cfgTranscribeWorkers" type="number" min="1" max="8" class="input ltr mono" required />
+            </div>
+          </div>
+
+          <label class="toggle-row" for="cfgKeepAudio">
+            <div>
+              <strong>الاحتفاظ بملفات الصوت (MP3) بجانب التفريغ</strong>
+              <span class="hint">حفظ نسخة MP3 داخل مجلد <span class="mono ltr">audio/</span> بدلاً من حذفها بعد التفريغ.</span>
+            </div>
+            <span class="switch">
+              <input id="cfgKeepAudio" type="checkbox" />
+              <span class="switch-track"></span>
+            </span>
+          </label>
         </div>
 
-        <label class="toggle-card" for="cfgKeepAudio">
-          <input id="cfgKeepAudio" type="checkbox" />
-          <div>
-            <strong>الاحتفاظ بملفات الصوت (MP3) بجانب التفريغ</strong>
-            <span class="hint">عند التفعيل، تُحفظ نسخة MP3 خفيفة داخل مجلد <span class="mono ltr">audio/</span> بجانب كل ملف تفريغ.</span>
-          </div>
-        </label>
-
-        <div class="field">
-          <label for="cfgModels">ترتيب نماذج الذكاء الاصطناعي (Gemini Models)</label>
-          <textarea id="cfgModels" class="textarea ltr mono" style="min-height:68px;" placeholder="gemini-3.6-flash, gemini-3-flash-preview, gemini-3.5-flash, gemini-3.8-flash, gemini-3.5-flash-lite, gemini-3.1-flash-lite"></textarea>
-          <div class="hint">
-            يُجرَّب كل نموذج بالترتيب (مفصولة بفاصلة أو سطر جديد) مع تخطي 429/503 تلقائياً — يُفضَّل إبقاء نماذج Free Tier ذات مخرجات 65K في المقدمة وتقليل التفريغات المتزامنة إلى 1 لتفادي حدود الطلبات.
+        <div class="settings-section">
+          <div class="section-label">نماذج Gemini</div>
+          <div class="field">
+            <label for="cfgModels">ترتيب نماذج الذكاء الاصطناعي (Gemini Models)</label>
+            <textarea id="cfgModels" class="textarea ltr mono" style="min-height:66px;" placeholder="gemini-3.6-flash, gemini-3-flash-preview, gemini-3.5-flash, gemini-3.8-flash, gemini-3.5-flash-lite, gemini-3.1-flash-lite"></textarea>
+            <div class="hint">
+              يُجرَّب كل نموذج بالترتيب مع تخطي تلقائي عند 429/503 أو التفريغ الناقص.
+            </div>
           </div>
         </div>
       </div>
+
       <div class="modal-footer">
         <button class="btn" data-close="settingsModal" type="button">إلغاء</button>
-        <button class="btn btn-primary" type="submit">💾 حفظ الإعدادات</button>
+        <button class="btn btn-primary" type="submit">حفظ الإعدادات</button>
       </div>
     </form>
   </div>
@@ -977,21 +1311,35 @@
 <div id="transcriptModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="transcriptTitle">
   <div class="modal modal-lg">
     <div class="modal-header">
-      <h2 id="transcriptTitle">📄 معاينة التفريغ</h2>
-      <button class="btn btn-sm" data-close="transcriptModal" type="button">✕</button>
+      <h2 id="transcriptTitle">معاينة التفريغ</h2>
+      <button class="btn btn-ghost btn-icon" data-close="transcriptModal" type="button" aria-label="إغلاق">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
     </div>
+
     <div class="modal-body">
-      <div id="transcriptSavedNote" class="hint" style="display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap; background:var(--success-bg); border:1px solid rgba(52,211,153,0.3); color:var(--success); padding:7px 12px; border-radius:8px;">
-        <span>✅ محفوظ تلقائياً على جهازك (تم الحفظ في مجلد المخرجات)</span>
-        <span id="transcriptFilePath" class="mono ltr" style="color:var(--text-muted); font-size:0.76rem;"></span>
+      <div id="transcriptSavedNote" class="saved-strip">
+        <span class="saved-strip-left">
+          <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          <span>محفوظ تلقائياً على جهازك</span>
+        </span>
+        <span id="transcriptFilePath" class="saved-path mono ltr"></span>
       </div>
+
       <div class="transcript-toolbar">
-        <div style="display:flex; gap:8px; flex-wrap:wrap;">
-          <button id="copyTranscriptBtn" class="btn btn-primary btn-sm" type="button">📋 نسخ النص كاملاً</button>
-          <button id="downloadTranscriptBtn" class="btn btn-success btn-sm" type="button">⬇️ تحميل ملف .md</button>
+        <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
+          <button id="copyTranscriptBtn" class="btn btn-primary btn-sm" type="button">نسخ النص</button>
+          <button id="downloadTranscriptBtn" class="btn btn-sm" type="button">تنزيل .md</button>
+          <button id="toggleRawBtn" class="btn btn-ghost btn-sm" type="button">Markdown الخام</button>
         </div>
-        <button id="toggleRawBtn" class="btn btn-sm" type="button">عرض Markdown الخام</button>
+        <input id="transcriptSearch" class="input transcript-search" type="search" placeholder="بحث داخل النص..." />
       </div>
+
       <div id="transcriptContent" class="transcript-view">جاري التحميل...</div>
     </div>
   </div>
@@ -1010,7 +1358,7 @@
     courseFilter: "all",
     statusFilter: "all",
     logs: [],
-    currentTranscript: { title: "", filename: "transcript.md", content: "", rawMode: false }
+    currentTranscript: { title: "", filename: "transcript.md", content: "", rawMode: false, query: "" }
   };
 
   const STAGE_MAP = {
@@ -1020,14 +1368,23 @@
     transcribing: { label: "تفريغ",       cls: "transcribing" },
     cleaning:     { label: "تنظيف",       cls: "cleaning" },
     done:         { label: "مكتمل",       cls: "done" },
-    paused:       { label: "متوقف مؤقتاً", cls: "paused" },
-    failed:       { label: "خطأ",         cls: "failed" },
+    paused:       { label: "متوقف",       cls: "paused" },
+    failed:       { label: "فشل",         cls: "failed" },
     cancelled:    { label: "ملغي",        cls: "cancelled" }
   };
 
   const ACTIVE_STATUSES = new Set(["downloading", "converting", "transcribing", "cleaning"]);
 
-  // Helpers
+  const ICONS = {
+    pause: '<svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>',
+    play: '<svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 4 20 12 6 20 6 4"/></svg>',
+    retry: '<svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>',
+    cancel: '<svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
+    trash: '<svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>',
+    doc: '<svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>',
+    alert: '<svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>'
+  };
+
   const $ = (id) => document.getElementById(id);
 
   function escapeHtml(str) {
@@ -1046,9 +1403,9 @@
     $("toastWrap").appendChild(el);
     setTimeout(() => {
       el.style.opacity = "0";
-      el.style.transition = "opacity 0.25s";
-      setTimeout(() => el.remove(), 260);
-    }, 3800);
+      el.style.transition = "opacity 0.22s";
+      setTimeout(() => el.remove(), 240);
+    }, 3400);
   }
 
   function formatSpeed(bps) {
@@ -1087,7 +1444,7 @@
     $("logCount").textContent = state.logs.length;
     $("logBox").innerHTML = state.logs.map((l) => `
       <div class="log-line">
-        <span class="log-time mono">[${escapeHtml(l.time)}]</span>
+        <span class="log-time mono">${escapeHtml(l.time)}</span>
         <span class="log-lvl-${escapeHtml(l.level)}">${escapeHtml(l.message)}</span>
       </div>
     `).join("");
@@ -1113,28 +1470,39 @@
     return c ? c.name : "";
   }
 
+  function updateUrlCounter() {
+    const raw = $("urlsInput").value || "";
+    const count = raw.split(/\r?\n/).map((s) => s.trim()).filter((s) => s && !s.startsWith("#")).length;
+    const el = $("urlCountTag");
+    if (el) {
+      el.textContent = count === 1 ? "رابط واحد" : `${count} روابط`;
+      el.classList.toggle("has-urls", count > 0);
+    }
+  }
+  $("urlsInput").addEventListener("input", updateUrlCounter);
+
   // Rendering
   function renderHeader() {
     const netBadge = $("netBadge");
     const netText = $("netText");
     if (state.online) {
-      netBadge.className = "pill ok";
-      netText.textContent = "متصل بالإنترنت";
+      netBadge.className = "status-item ok";
+      netText.textContent = "متصل";
     } else {
-      netBadge.className = "pill warn";
-      netText.textContent = "انقطع الاتصال — انتظار تلقائي...";
+      netBadge.className = "status-item warn";
+      netText.textContent = "غير متصل — انتظار تلقائي";
     }
 
     const ff = state.ffmpeg || {};
     const ffBadge = $("ffmpegBadge");
     const ffText = $("ffmpegText");
     if (ff.available) {
-      ffBadge.className = "pill ok";
-      ffText.textContent = "FFmpeg جاهز";
-      ffBadge.title = ff.version || ff.path || "FFmpeg متوفر";
+      ffBadge.className = "status-item ok";
+      ffText.textContent = "FFmpeg";
+      ffBadge.title = ff.version || ff.path || "FFmpeg جاهز";
     } else {
-      ffBadge.className = "pill err";
-      ffText.textContent = "FFmpeg غير مثبت";
+      ffBadge.className = "status-item err";
+      ffText.textContent = "FFmpeg مفقود";
       ffBadge.title = ff.error || "يرجى تثبيت FFmpeg وإضافته إلى PATH";
     }
 
@@ -1144,17 +1512,18 @@
     const mode = (state.config && state.config.download_mode) || "eco";
     const keepAudio = Boolean(state.config && state.config.keep_audio);
     const modeLabels = {
-      eco: "توفير أقصى (Eco) — صوت 32k ورفع مباشر",
-      balanced: "متوازن (Balanced) — صوت 64k وبديل طارئ",
-      strict_audio: "صوت فقط صارم (Strict Audio) — بدون فيديو"
+      eco: "توفير أقصى (Eco) · صوت 32k",
+      balanced: "متوازن (Balanced) · صوت 64k",
+      strict_audio: "صوت فقط صارم (Strict)"
     };
+    const validMode = modeLabels[mode] ? mode : "eco";
     const quickSel = $("quickModeSelect");
     const quickPill = $("quickModePill");
-    if (quickSel) quickSel.value = modeLabels[mode] ? mode : "eco";
-    if (quickPill) quickPill.className = `pill mode-pill mode-${modeLabels[mode] ? mode : "eco"}`;
+    if (quickSel) quickSel.value = validMode;
+    if (quickPill) quickPill.className = `mode-control mode-${validMode}`;
     const summaryEl = $("modeSummaryHint");
     if (summaryEl) {
-      summaryEl.textContent = `الوضع: ${modeLabels[mode] || modeLabels.eco} | حفظ MP3: ${keepAudio ? "مُفعَّل" : "معطّل"}`;
+      summaryEl.textContent = `وضع التوفير: ${modeLabels[validMode]} · حفظ MP3: ${keepAudio ? "نعم" : "لا"}`;
     }
   }
 
@@ -1202,7 +1571,6 @@
       return j.status === state.statusFilter;
     });
 
-    // Sort: active first, then queued, paused, failed, done, cancelled; then seq_num asc
     const rank = (s) => {
       if (ACTIVE_STATUSES.has(s)) return 0;
       if (s === "queued") return 1;
@@ -1221,22 +1589,22 @@
     if (filtered.length === 0) {
       container.innerHTML = `
         <div class="empty-state">
-          <strong>لا توجد مهام مطابقة للعرض الحالي</strong>
-          ${allJobs.length === 0 ? "الصق روابط YouTube أو Google Drive في الأعلى واضغط «إضافة وبدء التفريغ»." : "جرّب تغيير فلتر المادة أو الحالة."}
+          <div class="empty-icon">${ICONS.doc}</div>
+          <strong>لا توجد مهام في هذا العرض</strong>
+          <p>${allJobs.length === 0 ? "أدخل اسم المادة والصق روابط YouTube أو Google Drive في اللوحة الجانبية." : "جرّب تغيير تصفية المادة أو الحالة."}</p>
         </div>
       `;
       return;
     }
 
-    container.innerHTML = filtered.map(renderJobCard).join("");
+    container.innerHTML = filtered.map(renderJobRow).join("");
   }
 
-  function renderJobCard(j) {
+  function renderJobRow(j) {
     const statusKey = j.status || "queued";
     const stageKey = STAGE_MAP[j.stage] ? j.stage : statusKey;
     const stInfo = STAGE_MAP[stageKey] || { label: stageKey, cls: "queued" };
     const isActive = ACTIVE_STATUSES.has(statusKey);
-    const cardStatusCls = isActive ? "status-active" : `status-${statusKey}`;
 
     const rawPct = Number(j.progress || 0);
     const pct = Math.max(0, Math.min(100, statusKey === "done" ? 100 : rawPct));
@@ -1246,17 +1614,17 @@
         ? "failed"
         : statusKey === "paused"
           ? "paused"
-          : isActive
-            ? "active-stripe"
+          : statusKey === "queued"
+            ? "queued"
             : "";
 
     const isDrive = (j.source_type || "").toLowerCase().includes("drive");
     const sourceBadge = isDrive
-      ? '<span class="badge badge-drive">Google Drive</span>'
-      : '<span class="badge badge-yt">YouTube</span>';
+      ? '<span class="source-tag drive">Drive</span>'
+      : '<span class="source-tag yt">YouTube</span>';
 
     const courseName = courseNameById(j.course_id);
-    const seqStr = j.seq_num ? `#${String(j.seq_num).padStart(3, "0")}` : "";
+    const seqStr = j.seq_num ? String(j.seq_num).padStart(3, "0") : "";
     const speedStr = isActive ? formatSpeed(j.speed_bps) : "";
     const etaStr = isActive ? formatEta(j.eta_seconds) : "";
     const dlStr = j.bytes_downloaded > 0
@@ -1264,61 +1632,66 @@
       : "";
 
     const metrics = [];
-    if (speedStr) metrics.push(`<span class="metric">⚡ <span class="ltr mono">${escapeHtml(speedStr)}</span></span>`);
-    if (dlStr) metrics.push(`<span class="metric">📦 <span class="ltr mono">${escapeHtml(dlStr)}</span></span>`);
-    if (etaStr) metrics.push(`<span class="metric">⏱️ المتبقي <span class="ltr mono">${escapeHtml(etaStr)}</span></span>`);
-    if (j.retries > 0) metrics.push(`<span class="metric">🔁 محاولات: <strong>${j.retries}</strong></span>`);
-    if (j.stage && j.stage !== statusKey && !STAGE_MAP[j.stage]) {
-      metrics.push(`<span class="metric">${escapeHtml(j.stage)}</span>`);
-    }
+    if (speedStr) metrics.push(`<span class="ltr mono">${escapeHtml(speedStr)}</span>`);
+    if (dlStr) metrics.push(`<span class="ltr mono">${escapeHtml(dlStr)}</span>`);
+    if (etaStr) metrics.push(`<span>متبقي <span class="ltr mono">${escapeHtml(etaStr)}</span></span>`);
+    if (j.retries > 0) metrics.push(`<span>محاولات: <span class="mono">${j.retries}</span></span>`);
+
+    const metricsHtml = metrics.length
+      ? metrics.join('<span class="metric-sep">·</span>')
+      : (statusKey === "done"
+          ? "محفوظ تلقائياً على القرص"
+          : (statusKey === "queued" ? "في انتظار دور المعالجة" : ""));
 
     const actions = [];
     if (isActive || statusKey === "queued") {
-      actions.push(`<button class="btn btn-warn btn-sm" data-act="pause" data-id="${escapeHtml(j.id)}">⏸️ إيقاف مؤقت</button>`);
-      actions.push(`<button class="btn btn-danger btn-sm" data-act="cancel" data-id="${escapeHtml(j.id)}">✖ إلغاء</button>`);
+      actions.push(`<button class="btn btn-ghost btn-sm" data-act="pause" data-id="${escapeHtml(j.id)}" title="إيقاف مؤقت">${ICONS.pause}<span>إيقاف</span></button>`);
+      actions.push(`<button class="btn btn-danger-ghost btn-icon" data-act="cancel" data-id="${escapeHtml(j.id)}" title="إلغاء">${ICONS.cancel}</button>`);
     } else if (statusKey === "paused") {
-      actions.push(`<button class="btn btn-success btn-sm" data-act="resume" data-id="${escapeHtml(j.id)}">▶️ استئناف</button>`);
-      actions.push(`<button class="btn btn-danger btn-sm" data-act="cancel" data-id="${escapeHtml(j.id)}">✖ إلغاء</button>`);
+      actions.push(`<button class="btn btn-sm" data-act="resume" data-id="${escapeHtml(j.id)}" title="استئناف">${ICONS.play}<span>استئناف</span></button>`);
+      actions.push(`<button class="btn btn-danger-ghost btn-icon" data-act="cancel" data-id="${escapeHtml(j.id)}" title="إلغاء">${ICONS.cancel}</button>`);
     } else if (statusKey === "failed" || statusKey === "cancelled") {
-      actions.push(`<button class="btn btn-primary btn-sm" data-act="retry" data-id="${escapeHtml(j.id)}">🔄 إعادة المحاولة</button>`);
-      actions.push(`<button class="btn btn-sm" data-act="delete" data-id="${escapeHtml(j.id)}">🗑️ حذف</button>`);
+      actions.push(`<button class="btn btn-sm" data-act="retry" data-id="${escapeHtml(j.id)}">${ICONS.retry}<span>إعادة</span></button>`);
+      actions.push(`<button class="btn btn-danger-ghost btn-icon" data-act="delete" data-id="${escapeHtml(j.id)}" title="حذف">${ICONS.trash}</button>`);
     } else if (statusKey === "done") {
-      actions.push(`<button class="btn btn-success btn-sm" data-act="preview" data-id="${escapeHtml(j.id)}">📄 معاينة / نسخ</button>`);
-      actions.push(`<button class="btn btn-sm" data-act="retry" data-id="${escapeHtml(j.id)}" title="إعادة التفريغ">🔄</button>`);
-      actions.push(`<button class="btn btn-sm" data-act="delete" data-id="${escapeHtml(j.id)}" title="حذف من القائمة">🗑️</button>`);
+      actions.push(`<button class="btn btn-sm" data-act="preview" data-id="${escapeHtml(j.id)}">${ICONS.doc}<span>معاينة</span></button>`);
+      actions.push(`<button class="btn btn-ghost btn-icon" data-act="retry" data-id="${escapeHtml(j.id)}" title="إعادة التفريغ">${ICONS.retry}</button>`);
+      actions.push(`<button class="btn btn-danger-ghost btn-icon" data-act="delete" data-id="${escapeHtml(j.id)}" title="حذف من القائمة">${ICONS.trash}</button>`);
     }
 
+    const displayTitle = String(j.title || j.url || j.id).replace(/\.(mp4|mkv|webm|m4a|mp3|wav|ogg|mov|avi)$/i, "");
     const titleHtml = j.url
-      ? `<a class="job-title" href="${escapeHtml(j.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(j.title || j.url)}</a>`
-      : `<span class="job-title">${escapeHtml(j.title || j.id)}</span>`;
+      ? `<a class="job-title" href="${escapeHtml(j.url)}" target="_blank" rel="noopener noreferrer" title="${escapeHtml(displayTitle)}">${escapeHtml(displayTitle)}</a>`
+      : `<span class="job-title" title="${escapeHtml(displayTitle)}">${escapeHtml(displayTitle)}</span>`;
 
     return `
-      <article class="job-card ${cardStatusCls}" data-job-id="${escapeHtml(j.id)}">
-        <div class="job-top">
-          <div class="job-title-wrap">
+      <article class="job-row status-${escapeHtml(statusKey)}" data-job-id="${escapeHtml(j.id)}">
+        <div class="job-head">
+          <div class="job-identity">
             ${seqStr ? `<span class="job-seq mono">${seqStr}</span>` : ""}
             ${sourceBadge}
             ${titleHtml}
-            ${courseName ? `<span class="job-course-tag">${escapeHtml(courseName)}</span>` : ""}
+            ${state.courseFilter === "all" && courseName ? `<span class="job-course-tag">${escapeHtml(courseName)}</span>` : ""}
           </div>
-          <span class="badge badge-stage-${stInfo.cls}">${escapeHtml(stInfo.label)}</span>
+          <div class="job-status-wrap">
+            <span class="stage-label stage-${stInfo.cls}">
+              <span class="stage-dot"></span>
+              <span>${escapeHtml(stInfo.label)}</span>
+            </span>
+            <span class="job-pct ltr mono">${pct.toFixed(0)}%</span>
+          </div>
         </div>
 
-        <div class="progress-row">
-          <div class="progress-track">
-            <div class="progress-fill ${fillCls}" style="width:${pct.toFixed(1)}%"></div>
-          </div>
-          <span class="progress-pct ltr mono">${pct.toFixed(0)}%</span>
+        <div class="progress-track">
+          <div class="progress-fill ${fillCls}" style="width:${pct.toFixed(1)}%"></div>
         </div>
 
-        <div class="job-meta-row">
-          <div class="job-metrics">
-            ${metrics.join("") || `<span class="hint">${statusKey === "done" ? "جاهز للقراءة والنسخ" : (statusKey === "queued" ? "في انتظار دور المعالجة..." : "")}</span>`}
-          </div>
+        <div class="job-foot">
+          <div class="job-metrics">${metricsHtml}</div>
           <div class="job-actions">${actions.join("")}</div>
         </div>
 
-        ${j.error_message ? `<div class="job-error">⚠️ ${escapeHtml(j.error_message)}</div>` : ""}
+        ${j.error_message ? `<div class="job-error">${ICONS.alert}<span>${escapeHtml(j.error_message)}</span></div>` : ""}
       </article>
     `;
   }
@@ -1414,7 +1787,6 @@
       return;
     }
 
-    // Job progress / status / created / updated
     const jobObj = data.job || (data.id ? data : (data.job_id ? { id: data.job_id, ...data } : null));
     if (jobObj && jobObj.id) {
       const prev = state.jobsById.get(jobObj.id) || {};
@@ -1425,18 +1797,12 @@
 
   function connectSSE() {
     const es = new EventSource("/api/events");
-    es.onopen = () => {
-      $("sseBadge").style.display = "none";
-    };
+    es.onopen = () => { $("sseBadge").style.display = "none"; };
     es.onmessage = (e) => {
       if (!e.data) return;
-      try {
-        handleEvent(JSON.parse(e.data));
-      } catch { /* ignore heartbeat comments */ }
+      try { handleEvent(JSON.parse(e.data)); } catch {}
     };
-    es.onerror = () => {
-      $("sseBadge").style.display = "inline-flex";
-    };
+    es.onerror = () => { $("sseBadge").style.display = "inline-flex"; };
   }
 
   // Modals
@@ -1459,9 +1825,7 @@
   function openSettings() {
     const c = state.config || {};
     $("cfgApiKey").value = "";
-    $("apiKeyHint").textContent = c.has_api_key
-      ? `(مُفعَّل حالياً: ${c.api_key_masked || "****"})`
-      : "(غير مضبوط بعد)";
+    $("apiKeyHint").textContent = c.has_api_key ? (c.api_key_masked || "****") : "غير مضبوط";
     $("cfgOutputDir").value = c.output_base_dir || "";
     $("cfgDownloadWorkers").value = c.download_workers ?? 3;
     $("cfgTranscribeWorkers").value = c.transcribe_workers ?? 1;
@@ -1485,12 +1849,8 @@
       });
       if (res.config) state.config = res.config;
       renderHeader();
-      const names = {
-        eco: "توفير أقصى (Eco)",
-        balanced: "متوازن (Balanced)",
-        strict_audio: "صوت فقط صارم (Strict Audio)"
-      };
-      toast(`تم التبديل إلى وضع: ${names[mode] || mode}`, "ok");
+      const names = { eco: "Eco", balanced: "Balanced", strict_audio: "Strict Audio" };
+      toast(`تم التبديل إلى وضع ${names[mode] || mode}`, "ok");
     } catch (err) {
       renderHeader();
       toast(`تعذر تغيير الوضع: ${err.message}`, "err");
@@ -1518,7 +1878,7 @@
       if (res.config) state.config = res.config;
       renderHeader();
       closeModal("settingsModal");
-      toast("تم حفظ الإعدادات بنجاح", "ok");
+      toast("تم حفظ الإعدادات", "ok");
     } catch (err) {
       toast(`خطأ في حفظ الإعدادات: ${err.message}`, "err");
     }
@@ -1533,7 +1893,7 @@
 
     const btn = $("enqueueBtn");
     btn.disabled = true;
-    btn.textContent = "⏳ جاري تحليل الروابط...";
+    btn.textContent = "جاري تحليل الروابط...";
     try {
       const res = await api("/api/enqueue", {
         method: "POST",
@@ -1542,14 +1902,15 @@
       const added = res.added ?? (res.jobs ? res.jobs.length : 0);
       const skipped = res.skipped ?? 0;
       const errors = res.errors ? res.errors.length : 0;
-      toast(`تمت إضافة ${added} محاضرة (تم تخطي ${skipped}${errors ? `، أخطاء ${errors}` : ""})`, added > 0 ? "ok" : "warn");
+      toast(`تمت إضافة ${added} محاضرة (تخطي ${skipped}${errors ? ` · أخطاء ${errors}` : ""})`, added > 0 ? "ok" : "warn");
       $("urlsInput").value = "";
+      updateUrlCounter();
       await loadState();
     } catch (err) {
       toast(`تعذر إضافة الروابط: ${err.message}`, "err");
     } finally {
       btn.disabled = false;
-      btn.textContent = "🚀 إضافة وبدء التفريغ";
+      btn.textContent = "إضافة وبدء التفريغ";
     }
   });
 
@@ -1580,7 +1941,7 @@
   $("resumeAllBtn").addEventListener("click", async () => {
     try {
       await api("/api/resume_all", { method: "POST", body: "{}" });
-      toast("تم استئناف جميع المهام", "ok");
+      toast("تم استئناف المهام", "ok");
       await loadState();
     } catch (err) { toast(err.message, "err"); }
   });
@@ -1592,7 +1953,7 @@
     } catch (err) { toast(`تعذر فتح المجلد: ${err.message}`, "err"); }
   });
 
-  // Job card action delegation
+  // Job row actions
   $("jobsList").addEventListener("click", async (e) => {
     const btn = e.target.closest("button[data-act]");
     if (!btn) return;
@@ -1620,41 +1981,54 @@
     }
   });
 
-  // Transcript preview
+  // Transcript preview & inline search
   function renderTranscriptBody() {
     const el = $("transcriptContent");
     const raw = state.currentTranscript.content || "";
+    const q = (state.currentTranscript.query || "").trim();
     if (state.currentTranscript.rawMode) {
       el.classList.add("mono");
       el.textContent = raw;
-      $("toggleRawBtn").textContent = "عرض القراءة المنسقة";
+      $("toggleRawBtn").textContent = "القراءة المنسقة";
       return;
     }
     el.classList.remove("mono");
-    $("toggleRawBtn").textContent = "عرض Markdown الخام";
-    const html = escapeHtml(raw)
+    $("toggleRawBtn").textContent = "Markdown الخام";
+    let html = escapeHtml(raw)
       .replace(/^### (.+)$/gm, "<h3>$1</h3>")
       .replace(/^## (.+)$/gm, "<h2>$1</h2>")
       .replace(/^# (.+)$/gm, "<h1>$1</h1>")
       .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
       .replace(/\[(\d{1,2}:\d{2}(?::\d{2})?)\]/g, '<span class="ts-badge">[$1]</span>');
+    if (q.length >= 2) {
+      const safeQ = escapeHtml(q).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      html = html.replace(new RegExp(`(${safeQ})`, "gi"), '<mark class="hl">$1</mark>');
+    }
     el.innerHTML = html;
   }
 
+  $("transcriptSearch").addEventListener("input", (e) => {
+    state.currentTranscript.query = e.target.value;
+    renderTranscriptBody();
+  });
+
   async function openTranscriptPreview(jobId) {
     const job = state.jobsById.get(jobId);
-    $("transcriptTitle").textContent = `📄 ${job ? job.title : "معاينة التفريغ"}`;
+    const cleanTitle = String(job ? job.title : "معاينة التفريغ").replace(/\.(mp4|mkv|webm|m4a|mp3|wav|ogg)$/i, "");
+    $("transcriptTitle").textContent = cleanTitle;
     $("transcriptFilePath").textContent = (job && job.output_path) ? job.output_path : "";
+    $("transcriptSearch").value = "";
     $("transcriptContent").textContent = "جاري تحميل التفريغ...";
     openModal("transcriptModal");
     try {
       const res = await api(`/api/jobs/${encodeURIComponent(jobId)}/transcript`);
       $("transcriptFilePath").textContent = res.path || res.filename || "";
       state.currentTranscript = {
-        title: res.title || (job && job.title) || "transcript",
-        filename: res.filename || `${(job && job.title) || "transcript"}.md`,
+        title: res.title || cleanTitle,
+        filename: res.filename || `${cleanTitle}.md`,
         content: res.content || "",
-        rawMode: false
+        rawMode: false,
+        query: ""
       };
       renderTranscriptBody();
     } catch (err) {
@@ -1671,7 +2045,7 @@
     const text = state.currentTranscript.content || "";
     try {
       await navigator.clipboard.writeText(text);
-      toast("تم نسخ التفريغ إلى الحافظة", "ok");
+      toast("تم نسخ التفريغ", "ok");
     } catch {
       const ta = document.createElement("textarea");
       ta.value = text;
@@ -1679,7 +2053,7 @@
       ta.select();
       document.execCommand("copy");
       ta.remove();
-      toast("تم نسخ التفريغ إلى الحافظة", "ok");
+      toast("تم نسخ التفريغ", "ok");
     }
   });
 
@@ -1698,6 +2072,7 @@
   });
 
   // Boot
+  updateUrlCounter();
   loadState();
   connectSSE();
 })();
