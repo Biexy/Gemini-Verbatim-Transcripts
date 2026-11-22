@@ -173,11 +173,8 @@ function Setup-VirtualEnv($py) {
     }
 
     Write-Step "Installing minimal dependencies (yt-dlp, google-genai, requests)..."
-    & $venvPython -m pip install --upgrade pip --quiet
-    & $venvPython -m pip install -r (Join-Path $InstallDir "requirements.txt") --quiet
+    & $venvPython -m pip install --disable-pip-version-check --prefer-binary --retries 10 --timeout 60 -r (Join-Path $InstallDir "requirements.txt")
     if ($LASTEXITCODE -ne 0) { throw "Dependency installation failed." }
-    & $venvPython -m pip install --no-deps -e $InstallDir --quiet
-    if ($LASTEXITCODE -ne 0) { throw "Editable package installation failed." }
 
     Write-Ok "Environment & dependencies ready"
     return $venvPython

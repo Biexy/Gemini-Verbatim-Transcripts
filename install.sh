@@ -109,9 +109,7 @@ if [[ ! -x "$VENV_DIR/bin/python" ]]; then
 fi
 
 step "Installing minimal dependencies (yt-dlp, google-genai, requests)..."
-"$VENV_DIR/bin/python" -m pip install --upgrade pip --quiet
-"$VENV_DIR/bin/python" -m pip install -r "$INSTALL_DIR/requirements.txt" --quiet
-"$VENV_DIR/bin/python" -m pip install --no-deps -e "$INSTALL_DIR" --quiet
+"$VENV_DIR/bin/python" -m pip install --disable-pip-version-check --prefer-binary --retries 10 --timeout 60 -r "$INSTALL_DIR/requirements.txt"
 ok "Environment & dependencies ready"
 
 step "Installing CLI launcher into ${BIN_DIR}..."
