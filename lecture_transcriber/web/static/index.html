@@ -3,712 +3,1137 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Gemini Verbatim — مُفرِّغ المحاضرات</title>
+<title>Gemini Verbatim</title>
+<script>
+  (function () {
+    try {
+      var saved = localStorage.getItem("gv_theme");
+      if (saved === "dark" || saved === "light") {
+        document.documentElement.setAttribute("data-theme", saved);
+      }
+    } catch (e) {}
+  })();
+</script>
 <style>
   :root {
-    --bg: #09090b;
-    --surface: #111114;
-    --surface-2: #16161a;
-    --surface-hover: #1c1c22;
-    --input-bg: #0c0c0f;
-    --border: rgba(255, 255, 255, 0.08);
-    --border-strong: rgba(255, 255, 255, 0.15);
-    --border-focus: rgba(255, 255, 255, 0.34);
+    color-scheme: light;
+    --bg: #f6f6f3;
+    --surface: #ffffff;
+    --surface-subtle: #f3f2ee;
+    --surface-hover: #eeede7;
+    --paper: #fcfcfa;
+    --input-bg: #ffffff;
 
-    --text: #f4f4f5;
-    --text-secondary: #a1a1aa;
-    --text-muted: #71717a;
+    --border: #e5e4dd;
+    --border-subtle: #efeee8;
+    --border-strong: #d3d1c8;
 
-    --btn-primary-bg: #f4f4f5;
-    --btn-primary-text: #09090b;
-    --btn-primary-hover: #ffffff;
+    --ink: #18181b;
+    --ink-secondary: #52525b;
+    --ink-muted: #76767f;
+    --ink-faint: #a1a1aa;
 
-    --accent: #3b82f6;
-    --accent-soft: rgba(59, 130, 246, 0.14);
-    --success: #22c55e;
-    --success-soft: rgba(34, 197, 94, 0.12);
-    --warn: #eab308;
-    --warn-soft: rgba(234, 179, 8, 0.12);
-    --danger: #ef4444;
-    --danger-soft: rgba(239, 68, 68, 0.12);
+    --cta-bg: #18181b;
+    --cta-hover: #2d2d33;
+    --cta-text: #ffffff;
 
-    --radius: 10px;
-    --radius-sm: 7px;
-    --radius-xs: 5px;
-    --shadow-modal: 0 24px 64px rgba(0, 0, 0, 0.72), 0 0 0 1px rgba(255, 255, 255, 0.08);
+    --accent: #2c64c7;
+    --accent-soft: rgba(44, 100, 199, 0.08);
+    --accent-border: rgba(44, 100, 199, 0.22);
+
+    --sage: #1a7f4b;
+    --sage-soft: rgba(26, 127, 75, 0.09);
+    --sage-border: rgba(26, 127, 75, 0.22);
+
+    --amber: #b4690e;
+    --amber-soft: rgba(180, 105, 14, 0.09);
+    --amber-border: rgba(180, 105, 14, 0.24);
+
+    --crimson: #b92b2b;
+    --crimson-soft: rgba(185, 43, 43, 0.08);
+    --crimson-border: rgba(185, 43, 43, 0.22);
+
+    --track: #eae9e2;
+    --switch-off: #d4d3cc;
+    --switch-knob: #ffffff;
+
+    --mark-bg: #fef08a;
+    --mark-text: #713f12;
+
+    --shadow-bento: 0 1px 2px rgba(24, 24, 27, 0.03), 0 6px 20px -10px rgba(24, 24, 27, 0.06);
+    --shadow-card: 0 1px 2px rgba(24, 24, 27, 0.025);
+    --shadow-pill: 0 1px 2px rgba(24, 24, 27, 0.07);
+    --shadow-modal: 0 24px 64px -12px rgba(24, 24, 27, 0.16), 0 0 0 1px rgba(24, 24, 27, 0.05);
+    --shadow-sheet: 12px 0 48px rgba(24, 24, 27, 0.12);
+    --backdrop: rgba(24, 24, 27, 0.28);
+
+    --scrollbar: rgba(24, 24, 27, 0.14);
+    --scrollbar-hover: rgba(24, 24, 27, 0.26);
+
+    --radius-xl: 16px;
+    --radius-lg: 14px;
+    --radius-md: 10px;
+    --radius-sm: 8px;
   }
 
-  * { box-sizing: border-box; }
+  [data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #0d0d10;
+    --surface: #151519;
+    --surface-subtle: #1b1b21;
+    --surface-hover: #222229;
+    --paper: #121216;
+    --input-bg: #111115;
+
+    --border: #25252d;
+    --border-subtle: #1e1e25;
+    --border-strong: #373743;
+
+    --ink: #ececef;
+    --ink-secondary: #a1a1ac;
+    --ink-muted: #787885;
+    --ink-faint: #52525e;
+
+    --cta-bg: #ececef;
+    --cta-hover: #ffffff;
+    --cta-text: #111114;
+
+    --accent: #6c9cff;
+    --accent-soft: rgba(108, 156, 255, 0.13);
+    --accent-border: rgba(108, 156, 255, 0.28);
+
+    --sage: #4ade80;
+    --sage-soft: rgba(74, 222, 128, 0.11);
+    --sage-border: rgba(74, 222, 128, 0.24);
+
+    --amber: #fbbf24;
+    --amber-soft: rgba(251, 191, 36, 0.11);
+    --amber-border: rgba(251, 191, 36, 0.25);
+
+    --crimson: #f87171;
+    --crimson-soft: rgba(248, 113, 113, 0.11);
+    --crimson-border: rgba(248, 113, 113, 0.25);
+
+    --track: #24242d;
+    --switch-off: #30303a;
+    --switch-knob: #f4f4f6;
+
+    --mark-bg: rgba(251, 191, 36, 0.26);
+    --mark-text: #fef08a;
+
+    --shadow-bento: 0 1px 2px rgba(0, 0, 0, 0.28), 0 10px 28px -12px rgba(0, 0, 0, 0.55);
+    --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.24);
+    --shadow-pill: 0 1px 3px rgba(0, 0, 0, 0.35);
+    --shadow-modal: 0 28px 72px rgba(0, 0, 0, 0.68), 0 0 0 1px rgba(255, 255, 255, 0.06);
+    --shadow-sheet: 16px 0 56px rgba(0, 0, 0, 0.58);
+    --backdrop: rgba(4, 4, 7, 0.62);
+
+    --scrollbar: rgba(236, 236, 239, 0.16);
+    --scrollbar-hover: rgba(236, 236, 239, 0.28);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+
   html, body {
     margin: 0;
     padding: 0;
     background: var(--bg);
-    color: var(--text);
-    font-family: "Segoe UI", "IBM Plex Sans Arabic", "Noto Sans Arabic", system-ui, -apple-system, sans-serif;
-    font-size: 14px;
-    line-height: 1.5;
+    color: var(--ink);
+    font-family: "IBM Plex Sans Arabic", "Segoe UI", "Noto Sans Arabic", system-ui, -apple-system, sans-serif;
+    font-size: 15px;
+    line-height: 1.65;
     min-height: 100vh;
     -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    transition: background-color 0.18s ease, color 0.18s ease;
+  }
+
+  body {
+    display: flex;
+    flex-direction: column;
   }
 
   a { color: inherit; text-decoration: none; }
   button, input, textarea, select { font-family: inherit; }
 
-  .ltr { direction: ltr; unicode-bidi: embed; }
+  .ltr { direction: ltr; unicode-bidi: isolate; }
   .mono {
     font-family: "Cascadia Code", "JetBrains Mono", "Consolas", ui-monospace, monospace;
     font-variant-numeric: tabular-nums;
   }
   .tabular { font-variant-numeric: tabular-nums; }
-  .icon {
-    width: 15px;
-    height: 15px;
+
+  .svg-ico {
+    width: 16px;
+    height: 16px;
     flex-shrink: 0;
     display: inline-block;
-    vertical-align: -2px;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    fill: none;
+    stroke: currentColor;
   }
-  .icon-sm { width: 13px; height: 13px; }
+  .svg-ico.sm { width: 14px; height: 14px; }
+  .svg-ico.xs { width: 13px; height: 13px; }
 
-  /* Scrollbar */
-  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
   ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 99px; }
-  ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.22); }
+  ::-webkit-scrollbar-thumb { background: var(--scrollbar); border-radius: 99px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--scrollbar-hover); }
 
-  /* Top Utility Header */
-  header {
-    position: sticky;
-    top: 0;
-    z-index: 40;
-    background: rgba(9, 9, 11, 0.88);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid var(--border);
-  }
-  .header-inner {
-    max-width: 1400px;
+  /* =========================================================
+     BALANCED BENTO SHELL (max-width: 1140px)
+  ========================================================= */
+  .container {
+    width: 100%;
+    max-width: 1140px;
     margin: 0 auto;
-    height: 54px;
-    padding: 0 20px;
+    padding-inline: 24px;
+  }
+
+  /* =========================================================
+     CLEAN TOP BAR
+  ========================================================= */
+  .topbar {
+    width: 100%;
+    padding-top: 8px;
+  }
+  .topbar-inner {
+    height: 64px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 16px;
+    gap: 12px;
   }
+
   .brand {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: 10px;
-    min-width: 0;
+    gap: 12px;
+    color: var(--ink);
+    user-select: none;
   }
-  .brand-mark {
-    width: 28px;
-    height: 28px;
-    border-radius: 7px;
-    background: var(--surface-2);
-    border: 1px solid var(--border-strong);
+  .brand-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
     display: grid;
     place-items: center;
-    color: var(--text);
-    flex-shrink: 0;
+    color: var(--ink);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-card);
   }
-  .brand-text {
+  .brand-icon .svg-ico {
+    width: 19px;
+    height: 19px;
+    stroke-width: 1.75;
+  }
+  .brand-copy {
     display: flex;
-    align-items: baseline;
-    gap: 8px;
-    min-width: 0;
+    flex-direction: column;
+    gap: 1px;
   }
-  .brand h1 {
+  .brand-name {
     margin: 0;
-    font-size: 0.95rem;
-    font-weight: 600;
-    letter-spacing: -0.01em;
-    white-space: nowrap;
+    font-size: 1.18rem;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+    line-height: 1.15;
   }
   .brand-sub {
-    color: var(--text-muted);
     font-size: 0.78rem;
-    white-space: nowrap;
-  }
-  @media (max-width: 720px) {
-    .brand-sub { display: none; }
+    color: var(--ink-muted);
+    line-height: 1.25;
   }
 
-  .header-right {
+  .topbar-end {
     display: flex;
     align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
+    gap: 7px;
   }
 
-  .status-item {
+  /* Quiet status indicator — subtle dot normally, soft pill on issue */
+  .health-indicator {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 4px 10px;
-    border-radius: var(--radius-xs);
-    font-size: 0.78rem;
+    height: 32px;
+    padding: 0 10px;
+    border-radius: 99px;
+    font-size: 0.77rem;
     font-weight: 500;
-    color: var(--text-secondary);
-    background: transparent;
+    color: var(--ink-muted);
     border: 1px solid transparent;
+    transition: background-color 0.15s, border-color 0.15s, color 0.15s;
   }
-  .status-item.ok .status-dot { background: var(--success); }
-  .status-item.warn {
-    color: #fde047;
-    background: var(--warn-soft);
-    border-color: rgba(234, 179, 8, 0.25);
-  }
-  .status-item.warn .status-dot { background: var(--warn); }
-  .status-item.err {
-    color: #fca5a5;
-    background: var(--danger-soft);
-    border-color: rgba(239, 68, 68, 0.28);
-  }
-  .status-item.err .status-dot { background: var(--danger); }
-
-  .status-dot {
-    width: 6px;
-    height: 6px;
+  .health-dot {
+    width: 7px;
+    height: 7px;
     border-radius: 50%;
-    background: var(--text-muted);
+    background: var(--sage);
     flex-shrink: 0;
   }
-
-  .divider-v {
-    width: 1px;
-    height: 18px;
-    background: var(--border);
-    margin: 0 2px;
+  .health-label { white-space: nowrap; }
+  .health-indicator.is-ok .health-label { display: none; }
+  .health-indicator.is-ok { padding: 0 7px; }
+  .health-indicator.is-warn {
+    background: var(--amber-soft);
+    border-color: var(--amber-border);
+    color: var(--amber);
   }
+  .health-indicator.is-warn .health-dot { background: var(--amber); }
+  .health-indicator.is-err {
+    background: var(--crimson-soft);
+    border-color: var(--crimson-border);
+    color: var(--crimson);
+  }
+  .health-indicator.is-err .health-dot { background: var(--crimson); }
 
-  .mode-control {
+  /* Compact Mode Select in Top Bar */
+  .mode-pill {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    height: 30px;
+    height: 32px;
     padding: 0 9px;
-    border-radius: var(--radius-xs);
+    border-radius: var(--radius-sm);
     border: 1px solid var(--border);
     background: var(--surface);
-    color: var(--text-secondary);
-    font-size: 0.78rem;
+    color: var(--ink-secondary);
+    box-shadow: var(--shadow-card);
     transition: border-color 0.15s;
   }
-  .mode-control:hover { border-color: var(--border-strong); }
-  .mode-control.mode-eco .mode-indicator { background: var(--success); }
-  .mode-control.mode-balanced .mode-indicator { background: var(--accent); }
-  .mode-control.mode-strict_audio .mode-indicator { background: var(--warn); }
-  .mode-indicator {
+  .mode-pill:hover { border-color: var(--border-strong); }
+  .mode-dot {
     width: 6px;
     height: 6px;
     border-radius: 50%;
+    background: var(--sage);
     flex-shrink: 0;
   }
+  .mode-pill.mode-eco .mode-dot { background: var(--sage); }
+  .mode-pill.mode-balanced .mode-dot { background: var(--accent); }
+  .mode-pill.mode-strict_audio .mode-dot { background: var(--amber); }
+
   .mode-select {
+    appearance: none;
+    -webkit-appearance: none;
     background: transparent;
     border: none;
-    color: var(--text);
-    font-size: 0.78rem;
+    color: var(--ink);
+    font-size: 0.84rem;
     font-weight: 500;
     cursor: pointer;
     outline: none;
     padding: 0;
   }
-  .mode-select option {
-    background: var(--surface);
-    color: var(--text);
-  }
+  .mode-select option { background: var(--surface); color: var(--ink); }
+  .mode-chevron { color: var(--ink-muted); pointer-events: none; }
 
   /* Buttons */
+  .icon-btn {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border-radius: var(--radius-sm);
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--ink-secondary);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.14s, color 0.14s, border-color 0.14s;
+  }
+  .icon-btn:hover { background: var(--surface-hover); color: var(--ink); }
+  .icon-btn.bordered {
+    background: var(--surface);
+    border-color: var(--border);
+    box-shadow: var(--shadow-card);
+  }
+  .icon-btn.bordered:hover {
+    border-color: var(--border-strong);
+    background: var(--surface-hover);
+  }
+  .icon-btn.danger:hover { background: var(--crimson-soft); color: var(--crimson); }
+  .icon-btn.sm { width: 28px; height: 28px; border-radius: 7px; }
+
+  .theme-btn .ico-sun { display: none; }
+  [data-theme="dark"] .theme-btn .ico-moon { display: none; }
+  [data-theme="dark"] .theme-btn .ico-sun { display: inline-block; }
+
   .btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 6px;
-    height: 32px;
-    padding: 0 12px;
-    border-radius: var(--radius-xs);
+    height: 36px;
+    padding: 0 14px;
+    border-radius: var(--radius-sm);
     border: 1px solid var(--border);
     background: var(--surface);
-    color: var(--text);
-    font-size: 0.81rem;
+    color: var(--ink);
+    font-size: 0.86rem;
     font-weight: 500;
     cursor: pointer;
-    transition: background 0.12s, border-color 0.12s, color 0.12s;
     white-space: nowrap;
+    transition: background-color 0.14s, border-color 0.14s, color 0.14s, opacity 0.14s, transform 0.08s;
   }
   .btn:hover:not(:disabled) {
     background: var(--surface-hover);
     border-color: var(--border-strong);
   }
   .btn:active:not(:disabled) { transform: scale(0.99); }
-  .btn:disabled {
-    opacity: 0.45;
-    cursor: not-allowed;
-  }
+  .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
   .btn-primary {
-    background: var(--btn-primary-bg);
-    border-color: var(--btn-primary-bg);
-    color: var(--btn-primary-text);
+    background: var(--cta-bg);
+    border-color: var(--cta-bg);
+    color: var(--cta-text);
     font-weight: 600;
   }
   .btn-primary:hover:not(:disabled) {
-    background: var(--btn-primary-hover);
-    border-color: var(--btn-primary-hover);
+    background: var(--cta-hover);
+    border-color: var(--cta-hover);
   }
   .btn-ghost {
     background: transparent;
     border-color: transparent;
-    color: var(--text-secondary);
+    color: var(--ink-secondary);
   }
   .btn-ghost:hover:not(:disabled) {
     background: var(--surface-hover);
     border-color: transparent;
-    color: var(--text);
+    color: var(--ink);
   }
-  .btn-danger-ghost {
-    background: transparent;
+  .btn-subtle {
+    background: var(--surface-subtle);
     border-color: transparent;
-    color: var(--text-muted);
+    color: var(--ink);
+    font-weight: 500;
   }
-  .btn-danger-ghost:hover:not(:disabled) {
-    background: var(--danger-soft);
-    color: #fca5a5;
+  .btn-subtle:hover:not(:disabled) {
+    background: var(--surface-hover);
+    border-color: var(--border);
   }
-  .btn-sm {
-    height: 27px;
-    padding: 0 9px;
-    font-size: 0.76rem;
-  }
-  .btn-icon {
-    width: 28px;
-    height: 28px;
-    padding: 0;
-  }
+  .btn-sm { height: 31px; padding: 0 11px; font-size: 0.83rem; border-radius: 7px; }
 
-  /* Alert Banner */
-  .banner-wrap {
-    max-width: 1400px;
-    margin: 14px auto 0;
-    padding: 0 20px;
-  }
-  .banner {
-    padding: 10px 14px;
-    border-radius: var(--radius-sm);
-    border: 1px solid rgba(234, 179, 8, 0.3);
-    background: var(--warn-soft);
-    color: #fef08a;
+  /* =========================================================
+     MISSING API KEY NOTICE
+  ========================================================= */
+  .notice-wrap { margin-top: 10px; }
+  .notice-wrap:has(.notice.hidden) { display: none; }
+  .notice {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
     flex-wrap: wrap;
-    font-size: 0.84rem;
+    padding: 10px 14px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--amber-border);
+    background: var(--amber-soft);
+    color: var(--amber);
+    font-size: 0.82rem;
   }
-  .banner.hidden { display: none; }
-  .banner-msg { display: flex; align-items: center; gap: 8px; }
+  .notice.hidden { display: none; }
+  .notice-msg { display: flex; align-items: center; gap: 8px; }
 
-  /* Two-Column Workspace Layout */
-  main {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 18px 20px 32px;
+  /* =========================================================
+     MAIN BENTO WORKSPACE
+  ========================================================= */
+  main.main-flow {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-top: 16px;
+    padding-bottom: 16px;
+  }
+
+  /* HERO 2-COLUMN BENTO GRID: Composer (~61%) + Companion Widgets (~39%) */
+  .hero-bento {
     display: grid;
-    grid-template-columns: 344px minmax(0, 1fr);
-    gap: 18px;
-    align-items: start;
-  }
-  @media (max-width: 980px) {
-    main {
-      grid-template-columns: 1fr;
-    }
+    grid-template-columns: minmax(0, 1.56fr) minmax(330px, 1fr);
+    gap: 16px;
+    align-items: stretch;
   }
 
-  .sidebar {
-    position: sticky;
-    top: 72px;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-  }
-  @media (max-width: 980px) {
-    .sidebar { position: static; }
-  }
-
-  .panel {
+  .bento-card {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: var(--radius);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-bento);
     overflow: hidden;
   }
-  .panel-header {
-    padding: 12px 15px;
-    border-bottom: 1px solid var(--border);
+
+  /* 1. COMPOSER BENTO TILE */
+  .composer-card {
+    display: flex;
+    flex-direction: column;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease;
+  }
+  .composer-card:focus-within { border-color: var(--border-strong); }
+  .composer-card.drag-over {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft), var(--shadow-bento);
+  }
+
+  .composer-head {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 10px;
-  }
-  .panel-title {
-    margin: 0;
-    font-size: 0.86rem;
-    font-weight: 600;
-    color: var(--text);
-    display: flex;
-    align-items: center;
-    gap: 7px;
-  }
-  .panel-body {
-    padding: 15px;
-  }
-
-  /* Form controls */
-  .stack { display: flex; flex-direction: column; gap: 12px; }
-  .field label {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 6px;
-    font-size: 0.78rem;
-    font-weight: 500;
-    color: var(--text-secondary);
-    margin-bottom: 5px;
-  }
-  .input, .textarea, .select {
-    width: 100%;
-    padding: 8px 10px;
-    border-radius: var(--radius-xs);
-    border: 1px solid var(--border);
-    background: var(--input-bg);
-    color: var(--text);
-    font-size: 0.84rem;
-    outline: none;
-    transition: border-color 0.14s;
-  }
-  .input:hover, .textarea:hover, .select:hover { border-color: var(--border-strong); }
-  .input:focus, .textarea:focus, .select:focus { border-color: var(--border-focus); }
-  .input::placeholder, .textarea::placeholder { color: var(--text-muted); }
-  .textarea {
-    min-height: 150px;
-    resize: vertical;
-    line-height: 1.55;
-  }
-  .hint {
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    line-height: 1.45;
-  }
-  .url-count-tag {
-    font-size: 0.72rem;
-    color: var(--text-muted);
-    font-variant-numeric: tabular-nums;
-  }
-  .url-count-tag.has-urls { color: var(--text-secondary); }
-
-  .composer-footer {
-    padding: 11px 15px;
-    border-top: 1px solid var(--border);
-    background: rgba(255, 255, 255, 0.015);
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  .btn-full { width: 100%; height: 36px; }
-
-  /* Compact Logs in Sidebar */
-  details.logs-panel {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    overflow: hidden;
-  }
-  details.logs-panel summary {
-    padding: 11px 15px;
-    cursor: pointer;
-    font-size: 0.81rem;
-    font-weight: 500;
-    color: var(--text-secondary);
-    list-style: none;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    user-select: none;
-  }
-  details.logs-panel summary::-webkit-details-marker { display: none; }
-  details.logs-panel summary:hover { color: var(--text); }
-  .log-count-pill {
-    font-size: 0.72rem;
-    padding: 1px 7px;
-    border-radius: 99px;
-    background: var(--surface-2);
-    border: 1px solid var(--border);
-    color: var(--text-muted);
-  }
-  .log-box {
-    border-top: 1px solid var(--border);
-    background: var(--input-bg);
-    padding: 10px 12px;
-    max-height: 220px;
-    overflow-y: auto;
-    font-size: 0.74rem;
-    color: var(--text-secondary);
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-  }
-  .log-line { display: flex; gap: 7px; align-items: baseline; line-height: 1.4; }
-  .log-time { color: var(--text-muted); flex-shrink: 0; font-size: 0.71rem; }
-  .log-lvl-error { color: #fca5a5; }
-  .log-lvl-warning { color: #fde047; }
-
-  /* Queue Main Column */
-  .queue-column {
-    display: flex;
-    flex-direction: column;
     gap: 12px;
+    padding: 13px 18px;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .course-field {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 9px;
     min-width: 0;
+    color: var(--ink-muted);
   }
-
-  /* Compact Inline Summary Strip + Toolbar */
-  .queue-toolbar {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 10px 14px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  .toolbar-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-  .kpi-strip {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    flex-wrap: wrap;
-    font-size: 0.8rem;
-    color: var(--text-muted);
-  }
-  .kpi-item {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-  }
-  .kpi-val {
-    font-weight: 600;
-    color: var(--text);
-    font-variant-numeric: tabular-nums;
-  }
-  .kpi-item.done .kpi-val { color: var(--success); }
-  .kpi-item.active .kpi-val { color: var(--accent); }
-  .kpi-item.failed .kpi-val { color: var(--danger); }
-
-  .toolbar-actions {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    flex-wrap: wrap;
-  }
-
-  .toolbar-bottom {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    flex-wrap: wrap;
-    padding-top: 10px;
-    border-top: 1px solid var(--border);
-  }
-  .segmented {
-    display: inline-flex;
-    align-items: center;
-    background: var(--input-bg);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-xs);
-    padding: 2px;
-    gap: 2px;
-  }
-  .chip {
-    padding: 4px 10px;
-    border-radius: 4px;
+  .course-input {
+    width: 100%;
     border: none;
     background: transparent;
-    color: var(--text-muted);
-    font-size: 0.77rem;
+    color: var(--ink);
+    font-size: 0.98rem;
     font-weight: 500;
-    cursor: pointer;
-    transition: background 0.12s, color 0.12s;
+    outline: none;
+    padding: 3px 0;
   }
-  .chip:hover { color: var(--text); }
-  .chip.active {
-    background: var(--surface-hover);
-    color: var(--text);
-  }
-  .course-select {
-    width: auto;
-    min-width: 190px;
-    height: 30px;
-    padding: 0 10px;
+  .course-input::placeholder { color: var(--ink-muted); font-weight: 400; }
+  .source-hint {
     font-size: 0.8rem;
+    color: var(--ink-muted);
+    white-space: nowrap;
+    user-select: none;
   }
 
-  /* Dense Pro Queue List */
-  .jobs-container {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    overflow: hidden;
-  }
-  .jobs-list {
+  .composer-body {
+    flex: 1;
     display: flex;
     flex-direction: column;
   }
-  .empty-state {
-    text-align: center;
-    padding: 64px 24px;
-    color: var(--text-muted);
-  }
-  .empty-icon {
-    width: 36px;
-    height: 36px;
-    margin: 0 auto 12px;
-    border-radius: 9px;
-    border: 1px solid var(--border);
-    background: var(--surface-2);
-    display: grid;
-    place-items: center;
-    color: var(--text-secondary);
-  }
-  .empty-state strong {
+  .urls-textarea {
+    flex: 1;
+    width: 100%;
+    min-height: 172px;
+    resize: none;
+    border: none;
+    background: transparent;
+    color: var(--ink);
+    padding: 16px 20px;
+    font-size: 0.87rem;
+    line-height: 1.78;
+    outline: none;
     display: block;
-    color: var(--text);
-    font-size: 0.9rem;
-    font-weight: 600;
-    margin-bottom: 4px;
   }
-  .empty-state p {
-    margin: 0;
-    font-size: 0.81rem;
-    color: var(--text-muted);
-  }
+  .urls-textarea::placeholder { color: var(--ink-faint); }
 
-  .job-row {
-    padding: 12px 15px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    transition: background 0.12s;
-  }
-  .job-row:last-child { border-bottom: none; }
-  .job-row:hover { background: rgba(255, 255, 255, 0.02); }
-  .job-row.status-cancelled { opacity: 0.58; }
-
-  .job-head {
+  .composer-foot {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding: 11px 16px 11px 14px;
+    border-top: 1px solid var(--border-subtle);
+    background: var(--surface-subtle);
   }
-  .job-identity {
+  .composer-meta {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 9px;
+    flex-wrap: wrap;
+    font-size: 0.84rem;
+    color: var(--ink-muted);
+  }
+  .url-counter { font-weight: 500; color: var(--ink-muted); }
+  .url-counter.has-urls { color: var(--ink); font-weight: 600; }
+  .meta-sep { color: var(--border-strong); user-select: none; }
+
+  .text-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    border: none;
+    background: transparent;
+    color: var(--ink-secondary);
+    font-size: 0.84rem;
+    font-weight: 500;
+    padding: 3px 7px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.13s, color 0.13s;
+  }
+  .text-action:hover { background: var(--surface-hover); color: var(--ink); }
+
+  .composer-cta {
+    height: 38px;
+    padding: 0 20px;
+    border-radius: 9px;
+    font-size: 0.9rem;
+  }
+
+  /* 2. COMPANION WIDGETS STACK (~39%) */
+  .widgets-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    min-width: 0;
+  }
+
+  .widget {
+    padding: 15px 17px;
+    display: flex;
+    flex-direction: column;
+    gap: 13px;
+  }
+  .widget-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .widget-eyebrow {
+    font-size: 0.84rem;
+    font-weight: 600;
+    color: var(--ink-secondary);
+    letter-spacing: 0.005em;
+  }
+
+  /* Widget 1: Progress Ring + Live Speed + 4 Micro Pills */
+  .progress-widget-hero {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .ring-wrap {
+    position: relative;
+    width: 62px;
+    height: 62px;
+    flex-shrink: 0;
+  }
+  .ring-svg {
+    width: 62px;
+    height: 62px;
+    transform: rotate(-90deg);
+  }
+  .ring-track {
+    fill: none;
+    stroke: var(--track);
+    stroke-width: 4.5;
+  }
+  .ring-fill {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 4.5;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.35s cubic-bezier(0.22, 1, 0.36, 1), stroke 0.2s ease;
+  }
+  .ring-fill.is-done { stroke: var(--sage); }
+  .ring-pct {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .ring-copy {
     min-width: 0;
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
   }
-  .job-seq {
-    font-size: 0.72rem;
-    color: var(--text-muted);
-    min-width: 28px;
+  .ring-headline {
+    font-size: 1.12rem;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.3;
+    display: flex;
+    align-items: baseline;
+    gap: 5px;
   }
-  .source-tag {
+  .ring-headline .muted {
+    font-size: 0.86rem;
+    font-weight: 400;
+    color: var(--ink-muted);
+  }
+  .speed-line {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.84rem;
+    color: var(--ink-secondary);
+  }
+  .speed-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--ink-faint);
+    flex-shrink: 0;
+  }
+  .speed-line.is-active { color: var(--accent); }
+  .speed-line.is-active .speed-dot {
+    background: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+  }
+  .speed-line.is-done { color: var(--sage); }
+  .speed-line.is-done .speed-dot { background: var(--sage); }
+
+  .micro-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 7px;
+  }
+  .micro-pill {
+    padding: 8px 8px;
+    border-radius: var(--radius-md);
+    background: var(--surface-subtle);
+    border: 1px solid var(--border-subtle);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+  }
+  .micro-val {
+    font-size: 1.02rem;
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--ink);
+  }
+  .micro-lbl {
+    font-size: 0.78rem;
+    color: var(--ink-muted);
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    padding: 1px 6px;
-    border-radius: 4px;
-    font-size: 0.69rem;
-    font-weight: 600;
-    letter-spacing: 0.02em;
-    border: 1px solid var(--border);
-    background: var(--surface-2);
-    color: var(--text-secondary);
-    flex-shrink: 0;
   }
-  .source-tag.yt { color: #f87171; border-color: rgba(239, 68, 68, 0.25); background: rgba(239, 68, 68, 0.08); }
-  .source-tag.drive { color: #4ade80; border-color: rgba(34, 197, 94, 0.25); background: rgba(34, 197, 94, 0.08); }
+  .micro-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--ink-faint);
+  }
+  .micro-pill.is-done .micro-dot { background: var(--sage); }
+  .micro-pill.is-active .micro-dot { background: var(--accent); }
+  .micro-pill.is-failed .micro-dot { background: var(--crimson); }
+  .micro-pill.is-failed.has-val .micro-val { color: var(--crimson); }
 
-  .job-title {
-    font-size: 0.87rem;
-    font-weight: 500;
-    color: var(--text);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .job-title:hover { text-decoration: underline; text-underline-offset: 3px; }
-  .job-course-tag {
-    font-size: 0.72rem;
-    color: var(--text-muted);
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
-  .job-course-tag::before { content: "·"; margin-left: 6px; color: var(--border-strong); }
-
-  .job-status-wrap {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    flex-shrink: 0;
-  }
-  .stage-label {
+  /* Widget 2: Saver Segmented Control + Model Chip + MP3 Toggle + Open Folder */
+  .model-chip {
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    font-size: 0.75rem;
+    max-width: 195px;
+    height: 26px;
+    padding: 0 9px;
+    border-radius: 99px;
+    border: 1px solid var(--border);
+    background: var(--surface-subtle);
+    color: var(--ink-secondary);
+    font-size: 0.76rem;
+    cursor: pointer;
+    transition: border-color 0.14s, color 0.14s, background-color 0.14s;
+  }
+  .model-chip:hover {
+    border-color: var(--border-strong);
+    color: var(--ink);
+    background: var(--surface-hover);
+  }
+  .model-chip span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .saver-seg {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3px;
+    padding: 3px;
+    border-radius: var(--radius-md);
+    background: var(--surface-subtle);
+    border: 1px solid var(--border-subtle);
+  }
+  .saver-btn {
+    border: none;
+    background: transparent;
+    color: var(--ink-secondary);
+    font-size: 0.84rem;
     font-weight: 500;
-    color: var(--text-secondary);
+    height: 32px;
+    border-radius: 7px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    transition: background-color 0.14s, color 0.14s, box-shadow 0.14s;
+  }
+  .saver-btn:hover { color: var(--ink); }
+  .saver-btn.active {
+    background: var(--surface);
+    color: var(--ink);
+    font-weight: 600;
+    box-shadow: var(--shadow-pill);
+  }
+  [data-theme="dark"] .saver-btn.active,
+  [data-theme="dark"] .tab-btn.active {
+    background: #262630;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
+  .saver-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .saver-btn[data-mode="eco"] .saver-dot { background: var(--sage); }
+  .saver-btn[data-mode="balanced"] .saver-dot { background: var(--accent); }
+  .saver-btn[data-mode="strict_audio"] .saver-dot { background: var(--amber); }
+
+  .saver-desc {
+    margin-top: -5px;
+    font-size: 0.82rem;
+    color: var(--ink-muted);
+  }
+
+  .widget-foot-controls {
+    padding-top: 11px;
+    border-top: 1px solid var(--border-subtle);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .inline-switch-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.84rem;
+    font-weight: 500;
+    color: var(--ink-secondary);
+    cursor: pointer;
+    user-select: none;
+  }
+  .switch-sm {
+    position: relative;
+    width: 32px;
+    height: 18px;
+    flex-shrink: 0;
+  }
+  .switch-sm input { position: absolute; opacity: 0; width: 0; height: 0; }
+  .switch-sm .switch-track {
+    position: absolute;
+    inset: 0;
+    border-radius: 99px;
+    background: var(--switch-off);
+    transition: background-color 0.18s ease;
+  }
+  .switch-sm .switch-track::after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--switch-knob);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    transition: transform 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .switch-sm input:checked + .switch-track { background: var(--cta-bg); }
+  [data-theme="dark"] .switch-sm input:checked + .switch-track { background: var(--accent); }
+  .switch-sm input:checked + .switch-track::after { transform: translateX(14px); }
+
+  /* =========================================================
+     COURSES STRIP (clickable tactile course chips)
+  ========================================================= */
+  .courses-strip {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    flex-wrap: wrap;
+  }
+  .courses-strip.hidden { display: none; }
+
+  .course-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    height: 34px;
+    padding: 0 13px;
+    border-radius: 99px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--ink-secondary);
+    font-size: 0.86rem;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: var(--shadow-card);
+    transition: background-color 0.14s, border-color 0.14s, color 0.14s;
+  }
+  .course-chip:hover {
+    border-color: var(--border-strong);
+    color: var(--ink);
+  }
+  .course-chip.active {
+    background: var(--cta-bg);
+    border-color: var(--cta-bg);
+    color: var(--cta-text);
+  }
+  .course-chip-count {
+    font-size: 0.78rem;
+    opacity: 0.76;
+  }
+
+  /* =========================================================
+     CALM QUEUE SECTION
+  ========================================================= */
+  .empty-whisper {
+    text-align: center;
+    padding: 28px 18px;
+    color: var(--ink-muted);
+    font-size: 0.9rem;
+    border: 1px dashed var(--border);
+    border-radius: var(--radius-lg);
+    background: transparent;
+  }
+
+  .queue-section.hidden { display: none; }
+
+  .queue-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+
+  .filter-tabs {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    padding: 3px;
+    border-radius: var(--radius-md);
+    background: var(--surface-subtle);
+    border: 1px solid var(--border-subtle);
+  }
+  .tab-btn {
+    border: none;
+    background: transparent;
+    color: var(--ink-secondary);
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 5px 12px;
+    border-radius: 7px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: background-color 0.14s, color 0.14s, box-shadow 0.14s;
+  }
+  .tab-btn:hover { color: var(--ink); }
+  .tab-btn.active {
+    background: var(--surface);
+    color: var(--ink);
+    font-weight: 600;
+    box-shadow: var(--shadow-pill);
+  }
+  .tab-count { font-size: 0.78rem; color: var(--ink-muted); }
+  .tab-btn.active .tab-count { color: var(--ink-secondary); }
+
+  .toolbar-end {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .mini-search {
+    position: relative;
+    width: 210px;
+  }
+  .mini-search .svg-ico {
+    position: absolute;
+    inset-inline-start: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--ink-faint);
+    pointer-events: none;
+  }
+  .mini-search input {
+    width: 100%;
+    height: 34px;
+    padding-inline: 30px 10px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--ink);
+    font-size: 0.85rem;
+    outline: none;
+    transition: border-color 0.14s;
+  }
+  .mini-search input::placeholder { color: var(--ink-faint); }
+  .mini-search input:focus { border-color: var(--border-strong); }
+
+  /* Airy List Container */
+  .jobs-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+  }
+
+  .job-row {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border-subtle);
+    transition: background-color 0.13s ease;
+  }
+  .job-row:last-child { border-bottom: none; }
+  .job-row:hover { background: var(--surface-hover); }
+
+  .job-main {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+  }
+
+  .job-info {
+    min-width: 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .job-title-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+  }
+  .job-title {
+    font-size: 0.98rem;
+    font-weight: 500;
+    color: var(--ink);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+  }
+  .job-title-btn {
+    border: none;
+    background: transparent;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    text-align: right;
+    font: inherit;
+    font-weight: 500;
+    color: var(--ink);
+    transition: color 0.13s;
+  }
+  .job-title-btn:hover { color: var(--accent); }
+
+  .source-tag {
+    display: inline-flex;
+    align-items: center;
+    height: 21px;
+    padding: 0 7px;
+    border-radius: 5px;
+    font-size: 0.74rem;
+    font-weight: 500;
+    color: var(--ink-muted);
+    background: var(--surface-subtle);
+    border: 1px solid var(--border-subtle);
+    flex-shrink: 0;
+  }
+
+  .job-subline {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    flex-wrap: wrap;
+    font-size: 0.83rem;
+    color: var(--ink-muted);
+  }
+  .job-ext-link {
+    color: var(--ink-faint);
+    display: inline-flex;
+    align-items: center;
+    transition: color 0.13s;
+  }
+  .job-ext-link:hover { color: var(--ink); }
+
+  .job-end {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+
+  .stage-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--ink-secondary);
+    white-space: nowrap;
   }
   .stage-dot {
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background: var(--text-muted);
+    background: var(--ink-faint);
+    flex-shrink: 0;
   }
-  .stage-downloading .stage-dot,
-  .stage-converting .stage-dot,
-  .stage-transcribing .stage-dot,
-  .stage-cleaning .stage-dot { background: var(--accent); }
-  .stage-downloading,
-  .stage-converting,
-  .stage-transcribing,
-  .stage-cleaning { color: #93c5fd; }
-  .stage-done .stage-dot { background: var(--success); }
-  .stage-done { color: #86efac; }
-  .stage-paused .stage-dot { background: var(--warn); }
-  .stage-paused { color: #fde047; }
-  .stage-failed .stage-dot { background: var(--danger); }
-  .stage-failed { color: #fca5a5; }
+  .stage-label.is-active { color: var(--accent); }
+  .stage-label.is-active .stage-dot {
+    background: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+  }
+  .stage-label.is-done { color: var(--sage); }
+  .stage-label.is-done .stage-dot { background: var(--sage); }
+  .stage-label.is-paused { color: var(--amber); }
+  .stage-label.is-paused .stage-dot { background: var(--amber); }
+  .stage-label.is-failed { color: var(--crimson); }
+  .stage-label.is-failed .stage-dot { background: var(--crimson); }
 
-  .job-pct {
-    font-size: 0.75rem;
-    color: var(--text-muted);
+  .stage-pct {
+    font-size: 0.82rem;
+    color: var(--ink-muted);
     min-width: 34px;
     text-align: left;
   }
 
-  /* Hairline 3px Progress Bar */
+  .job-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  /* Ultra-clean 2px Progress Bar */
+  .job-progress-wrap { margin-top: 11px; }
   .progress-track {
     width: 100%;
-    height: 3px;
+    height: 2px;
     border-radius: 99px;
-    background: rgba(255, 255, 255, 0.06);
+    background: var(--track);
     overflow: hidden;
   }
   .progress-fill {
@@ -716,540 +1141,910 @@
     border-radius: 99px;
     background: var(--accent);
     transition: width 0.28s ease;
-    width: 0%;
   }
-  .progress-fill.done { background: var(--success); }
-  .progress-fill.failed { background: var(--danger); }
-  .progress-fill.paused { background: var(--warn); }
-  .progress-fill.queued { background: rgba(255, 255, 255, 0.22); }
+  .progress-fill.is-paused { background: var(--amber); }
+  .progress-fill.is-failed { background: var(--crimson); }
+  .progress-fill.is-queued { background: var(--ink-faint); }
 
-  .job-foot {
+  .job-metrics {
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    flex-wrap: wrap;
+    font-size: 0.8rem;
+    color: var(--ink-muted);
+  }
+
+  .job-error {
+    margin-top: 10px;
+    display: flex;
+    align-items: flex-start;
+    gap: 7px;
+    font-size: 0.84rem;
+    color: var(--crimson);
+    background: var(--crimson-soft);
+    border: 1px solid var(--crimson-border);
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+    line-height: 1.55;
+  }
+  .job-error .svg-ico { margin-top: 2px; }
+
+  .filter-empty {
+    padding: 28px 18px;
+    text-align: center;
+    color: var(--ink-muted);
+    font-size: 0.84rem;
+  }
+
+  /* =========================================================
+     QUIET FOOTER & COLLAPSIBLE LOGS
+  ========================================================= */
+  .page-footer {
+    margin-top: auto;
+    padding: 22px 0 32px;
+  }
+  .footer-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-subtle);
+  }
+  .logs-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    border: none;
+    background: transparent;
+    color: var(--ink-muted);
+    font-size: 0.78rem;
+    font-weight: 500;
+    padding: 5px 10px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: background-color 0.14s, color 0.14s;
+  }
+  .logs-toggle:hover { background: var(--surface-hover); color: var(--ink); }
+  .logs-badge {
+    font-size: 0.71rem;
+    padding: 0 6px;
+    border-radius: 99px;
+    background: var(--surface-subtle);
+    border: 1px solid var(--border);
+    color: var(--ink-muted);
+  }
+  .logs-badge.empty { display: none; }
+
+  .logs-panel {
+    display: none;
+    margin-top: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+  .logs-panel.open { display: block; }
+  .logs-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--border-subtle);
+    font-size: 0.76rem;
+    color: var(--ink-secondary);
+    font-weight: 500;
+  }
+  .logs-body {
+    max-height: 200px;
+    overflow-y: auto;
+    padding: 10px 14px;
+    font-size: 0.75rem;
+    line-height: 1.6;
+  }
+  .log-line {
+    display: flex;
+    gap: 10px;
+    padding: 2px 0;
+    color: var(--ink-secondary);
+  }
+  .log-time { color: var(--ink-faint); flex-shrink: 0; }
+  .log-lvl-warning, .log-lvl-warn { color: var(--amber); }
+  .log-lvl-error, .log-lvl-err { color: var(--crimson); }
+
+  /* =========================================================
+     SLIDE-OVER TRANSCRIPT READER SHEET (iA Writer Calm)
+  ========================================================= */
+  .sheet-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    background: var(--backdrop);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.22s ease;
+  }
+  .sheet-backdrop.open { opacity: 1; pointer-events: auto; }
+
+  .sheet-panel {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: min(740px, 100vw);
+    background: var(--paper);
+    border-inline-start: 1px solid var(--border);
+    box-shadow: var(--shadow-sheet);
+    display: flex;
+    flex-direction: column;
+    transform: translateX(-100%);
+    transition: transform 0.26s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .sheet-backdrop.open .sheet-panel { transform: translateX(0); }
+
+  .sheet-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 20px 26px 14px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .sheet-title-wrap { min-width: 0; }
+  .sheet-title {
+    margin: 0;
+    font-size: 1.04rem;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1.45;
+  }
+  .sheet-stats { display: block; margin-top: 2px; font-size: 0.76rem; color: var(--ink-muted); }
+
+  .sheet-saved-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 26px;
+    background: var(--surface-subtle);
+    border-bottom: 1px solid var(--border-subtle);
+    font-size: 0.75rem;
+    color: var(--ink-secondary);
+  }
+  .saved-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--sage);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .saved-path {
+    color: var(--ink-muted);
+    font-size: 0.72rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+  }
+
+  .sheet-toolbar {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 10px;
     flex-wrap: wrap;
+    padding: 10px 26px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border-subtle);
   }
-  .job-metrics {
-    display: flex;
+  .sheet-actions { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .font-stepper {
+    display: inline-flex;
     align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-    font-size: 0.75rem;
-    color: var(--text-muted);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    overflow: hidden;
+    background: var(--surface);
   }
-  .metric-sep { color: var(--border-strong); }
-  .job-actions {
-    display: flex;
-    align-items: center;
-    gap: 4px;
+  .font-stepper button {
+    border: none;
+    background: transparent;
+    color: var(--ink-secondary);
+    height: 27px;
+    padding: 0 8px;
+    font-size: 0.73rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.13s, color 0.13s;
   }
+  .font-stepper button:hover { background: var(--surface-hover); color: var(--ink); }
+  .font-stepper button + button { border-inline-start: 1px solid var(--border-subtle); }
 
-  .job-error {
-    background: var(--danger-soft);
-    border: 1px solid rgba(239, 68, 68, 0.24);
-    color: #fca5a5;
-    padding: 7px 10px;
-    border-radius: var(--radius-xs);
-    font-size: 0.77rem;
+  .reader-search-wrap { display: flex; align-items: center; gap: 7px; }
+  .match-count { font-size: 0.73rem; color: var(--ink-muted); white-space: nowrap; }
+  .reader-search {
+    width: 175px;
+    height: 29px;
+    padding: 0 10px;
+    border-radius: 7px;
+    border: 1px solid var(--border);
+    background: var(--input-bg);
+    color: var(--ink);
+    font-size: 0.78rem;
+    outline: none;
+    transition: border-color 0.14s;
+  }
+  .reader-search:focus { border-color: var(--border-strong); }
+
+  .sheet-scroll { flex: 1; overflow-y: auto; padding: 30px 34px 64px; }
+  .transcript-article {
+    max-width: 64ch;
+    margin: 0 auto;
+    font-size: var(--reader-font-size, 16px);
+    line-height: 1.95;
+    color: var(--ink);
+    white-space: pre-wrap;
     word-break: break-word;
-    display: flex;
-    align-items: flex-start;
-    gap: 7px;
+  }
+  .transcript-article.is-raw {
+    font-size: 0.84rem;
+    line-height: 1.75;
+    color: var(--ink-secondary);
+  }
+  .transcript-article h1,
+  .transcript-article h2,
+  .transcript-article h3 {
+    margin: 1.35em 0 0.5em;
+    font-weight: 600;
+    line-height: 1.45;
+    color: var(--ink);
+  }
+  .transcript-article h1 { font-size: 1.26em; }
+  .transcript-article h2 { font-size: 1.12em; }
+  .transcript-article h3 { font-size: 1.02em; }
+  .transcript-article h1:first-child,
+  .transcript-article h2:first-child { margin-top: 0; }
+
+  .ts-chip {
+    display: inline-block;
+    direction: ltr;
+    unicode-bidi: isolate;
+    font-family: "Cascadia Code", "JetBrains Mono", "Consolas", ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+    font-size: 0.76em;
+    line-height: 1.35;
+    padding: 1px 6px;
+    margin-inline: 2px 4px;
+    border-radius: 5px;
+    background: var(--surface-subtle);
+    border: 1px solid var(--border-subtle);
+    color: var(--ink-muted);
+    vertical-align: 1px;
+  }
+  mark.hl {
+    background: var(--mark-bg);
+    color: var(--mark-text);
+    border-radius: 3px;
+    padding: 0 2px;
   }
 
-  /* Modals */
+  /* =========================================================
+     CLEAN SETTINGS MODAL
+  ========================================================= */
   .modal-backdrop {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.72);
-    backdrop-filter: blur(4px);
-    z-index: 100;
-    display: none;
+    z-index: 70;
+    background: var(--backdrop);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    display: flex;
     align-items: center;
     justify-content: center;
     padding: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.18s ease;
   }
-  .modal-backdrop.open { display: flex; }
-  .modal {
+  .modal-backdrop.open { opacity: 1; pointer-events: auto; }
+
+  .modal-card {
     width: 100%;
-    max-width: 600px;
-    max-height: 88vh;
+    max-width: 520px;
+    max-height: min(88vh, 760px);
     background: var(--surface);
-    border: 1px solid var(--border-strong);
-    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
     box-shadow: var(--shadow-modal);
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    transform: translateY(8px) scale(0.99);
+    transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
   }
-  .modal.modal-lg { max-width: 900px; }
-  .modal-header {
-    padding: 14px 18px;
-    border-bottom: 1px solid var(--border);
+  .modal-backdrop.open .modal-card { transform: translateY(0) scale(1); }
+
+  .modal-form {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .modal-head {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
+    padding: 15px 20px;
+    border-bottom: 1px solid var(--border-subtle);
+    flex-shrink: 0;
   }
-  .modal-header h2 {
-    margin: 0;
-    font-size: 0.94rem;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    min-width: 0;
-  }
+  .modal-head h2 { margin: 0; font-size: 0.96rem; font-weight: 600; color: var(--ink); }
+
   .modal-body {
-    padding: 18px;
+    flex: 1;
+    min-height: 0;
+    padding: 16px 20px;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 15px;
   }
-  .modal-footer {
-    padding: 12px 18px;
-    border-top: 1px solid var(--border);
-    background: rgba(255, 255, 255, 0.015);
+
+  .settings-group { display: flex; flex-direction: column; gap: 10px; }
+  .settings-group + .settings-group {
+    padding-top: 14px;
+    border-top: 1px solid var(--border-subtle);
+  }
+  .group-eyebrow {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--ink-muted);
+    letter-spacing: 0.02em;
+  }
+
+  .field { display: flex; flex-direction: column; gap: 5px; }
+  .field label {
     display: flex;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: space-between;
     gap: 8px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--ink-secondary);
   }
+  .field-hint { font-size: 0.74rem; color: var(--ink-muted); line-height: 1.5; }
 
-  .settings-section {
-    display: flex;
-    flex-direction: column;
-    gap: 11px;
+  .input, .select, .textarea {
+    width: 100%;
+    padding: 8px 11px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background-color: var(--input-bg);
+    color: var(--ink);
+    font-size: 0.83rem;
+    outline: none;
+    transition: border-color 0.14s, box-shadow 0.14s;
   }
-  .settings-section + .settings-section {
-    padding-top: 14px;
-    border-top: 1px solid var(--border);
+  .select {
+    appearance: none;
+    -webkit-appearance: none;
+    padding-inline-end: 30px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237a7a82' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: left 10px center;
+    cursor: pointer;
   }
-  .section-label {
-    font-size: 0.73rem;
-    font-weight: 600;
-    color: var(--text-muted);
-    letter-spacing: 0.03em;
-    text-transform: uppercase;
+  .select.ltr { background-position: right 10px center; }
+  .input:hover, .select:hover, .textarea:hover { border-color: var(--border-strong); }
+  .input:focus, .select:focus, .textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
   }
-  .form-row-2 {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
+  .input::placeholder, .textarea::placeholder { color: var(--ink-faint); }
+  .ar-ph::placeholder {
+    font-family: "IBM Plex Sans Arabic", "Segoe UI", "Noto Sans Arabic", system-ui, -apple-system, sans-serif;
+    direction: rtl;
+    text-align: right;
   }
-  @media (max-width: 560px) {
-    .form-row-2 { grid-template-columns: 1fr; }
-  }
+  .select option { background: var(--surface); color: var(--ink); }
+  .textarea { min-height: 66px; resize: vertical; line-height: 1.6; }
 
-  /* Custom Switch Toggle */
+  .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
   .toggle-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 14px;
-    padding: 10px 12px;
-    border-radius: var(--radius-xs);
+    padding: 11px 13px;
+    border-radius: var(--radius-md);
     border: 1px solid var(--border);
-    background: var(--input-bg);
+    background: var(--surface-subtle);
     cursor: pointer;
   }
-  .toggle-row strong {
-    display: block;
-    font-size: 0.83rem;
-    font-weight: 500;
-    color: var(--text);
-  }
-  .switch {
-    position: relative;
-    width: 36px;
-    height: 20px;
-    flex-shrink: 0;
-  }
-  .switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-    position: absolute;
-  }
+  .toggle-copy { display: flex; flex-direction: column; gap: 2px; }
+  .toggle-copy strong { font-size: 0.82rem; font-weight: 500; color: var(--ink); }
+  .switch { position: relative; width: 38px; height: 22px; flex-shrink: 0; }
+  .switch input { position: absolute; opacity: 0; width: 0; height: 0; }
   .switch-track {
     position: absolute;
     inset: 0;
     border-radius: 99px;
-    background: #27272a;
-    border: 1px solid var(--border-strong);
-    transition: background 0.16s, border-color 0.16s;
+    background: var(--switch-off);
+    transition: background-color 0.18s ease;
   }
   .switch-track::after {
     content: "";
     position: absolute;
-    top: 2px;
-    right: 2px;
-    width: 14px;
-    height: 14px;
+    top: 3px;
+    left: 3px;
+    width: 16px;
+    height: 16px;
     border-radius: 50%;
-    background: #a1a1aa;
-    transition: transform 0.16s, background 0.16s;
+    background: var(--switch-knob);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.22);
+    transition: transform 0.18s cubic-bezier(0.22, 1, 0.36, 1);
   }
-  .switch input:checked + .switch-track {
-    background: var(--btn-primary-bg);
-    border-color: var(--btn-primary-bg);
-  }
-  .switch input:checked + .switch-track::after {
-    transform: translateX(-16px);
-    background: var(--btn-primary-text);
-  }
+  .switch input:checked + .switch-track { background: var(--cta-bg); }
+  [data-theme="dark"] .switch input:checked + .switch-track { background: var(--accent); }
+  .switch input:checked + .switch-track::after { transform: translateX(16px); }
 
-  /* Transcript Reader */
-  .saved-strip {
+  .modal-foot {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    flex-wrap: wrap;
-    padding: 8px 12px;
-    border-radius: var(--radius-xs);
-    border: 1px solid rgba(34, 197, 94, 0.24);
-    background: var(--success-soft);
-    color: #86efac;
-    font-size: 0.78rem;
-  }
-  .saved-strip-left { display: inline-flex; align-items: center; gap: 6px; }
-  .saved-path {
-    color: var(--text-secondary);
-    font-size: 0.73rem;
-    word-break: break-all;
-  }
-  .transcript-toolbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    flex-wrap: wrap;
-  }
-  .transcript-search {
-    width: 220px;
-    height: 29px;
-    padding: 0 9px;
-    font-size: 0.78rem;
-  }
-  .transcript-view {
-    background: var(--input-bg);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 20px 22px;
-    max-height: 58vh;
-    overflow-y: auto;
-    line-height: 1.9;
-    font-size: 0.93rem;
-    white-space: pre-wrap;
-    word-break: break-word;
-    color: #e4e4e7;
-  }
-  .transcript-view h1, .transcript-view h2, .transcript-view h3 {
-    color: var(--text);
-    font-weight: 600;
-    margin: 14px 0 8px;
-  }
-  .ts-badge {
-    display: inline-block;
-    padding: 0 6px;
-    border-radius: 4px;
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid var(--border);
-    color: var(--text-secondary);
-    font-size: 0.76rem;
-    font-family: "Cascadia Code", "Consolas", monospace;
-    margin-left: 6px;
-    direction: ltr;
-    unicode-bidi: embed;
-  }
-  mark.hl {
-    background: rgba(234, 179, 8, 0.28);
-    color: #fef08a;
-    border-radius: 3px;
-    padding: 0 2px;
-  }
-
-  /* Toasts */
-  .toast-wrap {
-    position: fixed;
-    bottom: 18px;
-    left: 18px;
-    z-index: 200;
-    display: flex;
-    flex-direction: column;
+    justify-content: flex-end;
     gap: 8px;
-    max-width: 360px;
-  }
-  .toast {
-    background: var(--surface-2);
-    border: 1px solid var(--border-strong);
-    color: var(--text);
-    padding: 10px 13px;
-    border-radius: var(--radius-sm);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55);
-    font-size: 0.81rem;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    animation: fadeUp 0.16s ease;
-  }
-  .toast::before {
-    content: "";
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--accent);
+    padding: 13px 20px;
+    border-top: 1px solid var(--border-subtle);
+    background: var(--surface-subtle);
     flex-shrink: 0;
   }
-  .toast.ok::before { background: var(--success); }
-  .toast.err::before { background: var(--danger); }
-  .toast.warn::before { background: var(--warn); }
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(6px); }
+
+  /* =========================================================
+     TOAST NOTIFICATIONS
+  ========================================================= */
+  .toast-wrap {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 90;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    pointer-events: none;
+  }
+  .toast {
+    padding: 9px 15px;
+    border-radius: 99px;
+    background: var(--cta-bg);
+    color: var(--cta-text);
+    font-size: 0.8rem;
+    font-weight: 500;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18);
+    animation: toastIn 0.2s ease;
+  }
+  .toast.err { background: var(--crimson); color: #ffffff; }
+  .toast.warn { background: var(--amber); color: #ffffff; }
+  @keyframes toastIn {
+    from { opacity: 0; transform: translateY(8px); }
     to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* =========================================================
+     RESPONSIVE
+  ========================================================= */
+  @media (max-width: 900px) {
+    .hero-bento { grid-template-columns: 1fr; }
+    .urls-textarea { min-height: 120px; }
+  }
+  @media (max-width: 640px) {
+    .container { padding-inline: 14px; }
+    .source-hint { display: none; }
+    .job-main { flex-direction: column; align-items: stretch; gap: 10px; }
+    .job-end { justify-content: space-between; }
+    .row-2 { grid-template-columns: 1fr; }
+    .sheet-scroll { padding: 22px 18px 48px; }
+    .sheet-header, .sheet-toolbar, .sheet-saved-bar { padding-inline: 16px; }
+    .mini-search { width: 145px; }
   }
 </style>
 </head>
 <body>
 
-<header>
-  <div class="header-inner">
-    <div class="brand">
-      <div class="brand-mark" aria-hidden="true">
-        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
-          <path d="M4 12h2M8 7v10M12 4v16M16 8v8M20 12h-2"/>
-        </svg>
+<!-- MINIMAL TOP BAR -->
+<header class="topbar">
+  <div class="container">
+    <div class="topbar-inner">
+      <div class="brand">
+        <span class="brand-icon" aria-hidden="true">
+          <svg class="svg-ico" viewBox="0 0 24 24">
+            <path d="M4 12h1.5M8.5 7v10M12 4.5v15M15.5 8v8M18.5 12H20"/>
+          </svg>
+        </span>
+        <div class="brand-copy">
+          <h1 class="brand-name">Gemini Verbatim</h1>
+          <span class="brand-sub">تفريغ المحاضرات الحرفي</span>
+        </div>
       </div>
-      <div class="brand-text">
-        <h1>Gemini Verbatim</h1>
-        <span class="brand-sub">YouTube &amp; Google Drive</span>
+
+      <div class="topbar-end">
+        <span id="healthIndicator" class="health-indicator is-ok" title="متصل · FFmpeg جاهز">
+          <span class="health-dot"></span>
+          <span id="healthLabel" class="health-label"></span>
+        </span>
+
+        <label id="quickModePill" class="mode-pill mode-eco" title="وضع التوفير">
+          <span class="mode-dot" aria-hidden="true"></span>
+          <select id="quickModeSelect" class="mode-select" aria-label="وضع التوفير">
+            <option value="eco">Eco</option>
+            <option value="balanced">Balanced</option>
+            <option value="strict_audio">Strict</option>
+          </select>
+          <svg class="svg-ico xs mode-chevron" viewBox="0 0 24 24" aria-hidden="true">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+        </label>
+
+        <button id="themeToggleBtn" class="icon-btn bordered theme-btn" type="button" title="تبديل المظهر الفاتح / الداكن" aria-label="تبديل المظهر">
+          <svg class="svg-ico ico-moon" viewBox="0 0 24 24">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+          <svg class="svg-ico ico-sun" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="4.5"/>
+            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+          </svg>
+        </button>
+
+        <button id="openSettingsBtn" class="icon-btn bordered" type="button" title="الإعدادات" aria-label="الإعدادات">
+          <svg class="svg-ico" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.08a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.08a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+        </button>
       </div>
-    </div>
-
-    <div class="header-right">
-      <span id="netBadge" class="status-item ok" title="حالة الاتصال بالإنترنت">
-        <span class="status-dot"></span>
-        <span id="netText">متصل</span>
-      </span>
-
-      <span id="ffmpegBadge" class="status-item" title="حالة أداة FFmpeg لمعالجة الصوت">
-        <span class="status-dot"></span>
-        <span id="ffmpegText">FFmpeg</span>
-      </span>
-
-      <span id="sseBadge" class="status-item warn" title="إعادة الاتصال بالخادم المحلي" style="display:none;">
-        <span class="status-dot"></span>
-        <span>إعادة الاتصال...</span>
-      </span>
-
-      <span class="divider-v" aria-hidden="true"></span>
-
-      <label class="mode-control mode-eco" id="quickModePill" title="وضع التوفير (Download Mode)">
-        <span class="mode-indicator"></span>
-        <select id="quickModeSelect" class="mode-select" aria-label="وضع التوفير (Download Mode)">
-          <option value="eco">Eco — توفير أقصى</option>
-          <option value="balanced">Balanced — متوازن</option>
-          <option value="strict_audio">Strict — صوت فقط</option>
-        </select>
-      </label>
-
-      <button class="btn" id="openSettingsBtn" type="button">
-        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="3"/>
-          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9c.26.604.852.997 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-        </svg>
-        <span>الإعدادات</span>
-      </button>
     </div>
   </div>
 </header>
 
-<div class="banner-wrap">
-  <div id="apiKeyBanner" class="banner hidden">
-    <span class="banner-msg">
-      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+<!-- MISSING API KEY NOTICE -->
+<div class="container notice-wrap">
+  <div id="apiKeyBanner" class="notice hidden">
+    <span class="notice-msg">
+      <svg class="svg-ico" viewBox="0 0 24 24">
         <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-        <line x1="12" y1="9" x2="12" y2="13"/>
-        <line x1="12" y1="17" x2="12.01" y2="17"/>
+        <path d="M12 9v4M12 17h.01"/>
       </svg>
-      <span>مفتاح <strong>Gemini API Key</strong> غير مضبوط — أضفه من الإعدادات للبدء.</span>
+      <span>مفتاح <strong>Gemini API Key</strong> غير مضبوط بعد — أضفه من الإعدادات للبدء.</span>
     </span>
-    <button class="btn btn-sm" id="bannerSettingsBtn" type="button">إضافة المفتاح</button>
+    <button id="bannerSettingsBtn" class="btn btn-sm" type="button">إضافة المفتاح</button>
   </div>
 </div>
 
-<main>
-  <!-- Left/Start Sidebar: Add Queue + Logs -->
-  <aside class="sidebar">
-    <section class="panel" aria-label="إضافة محاضرات جديدة">
-      <div class="panel-header">
-        <h2 class="panel-title">
-          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
-            <line x1="12" y1="5" x2="12" y2="19"/>
-            <line x1="5" y1="12" x2="19" y2="12"/>
+<!-- MAIN BENTO WORKSPACE -->
+<main class="container main-flow">
+  <!-- TOP HERO BENTO GRID -->
+  <section class="hero-bento" aria-label="إضافة الروابط والحالة السريعة">
+    <!-- MAIN BENTO TILE: ADD LECTURES COMPOSER -->
+    <form id="enqueueForm" class="bento-card composer-card">
+      <div class="composer-head">
+        <div class="course-field">
+          <svg class="svg-ico sm" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
           </svg>
-          <span>إضافة محاضرات</span>
-        </h2>
-        <span class="hint">YouTube · Drive</span>
+          <input id="courseInput" class="course-input" list="courseSuggestions" placeholder="اسم المادة أو المجلد (مثال: المتحكم الدقيق)" required />
+          <datalist id="courseSuggestions"></datalist>
+        </div>
+        <span class="source-hint ltr">YouTube · Google Drive</span>
       </div>
 
-      <form id="enqueueForm">
-        <div class="panel-body stack">
-          <div class="field">
-            <label for="courseInput">اسم المادة / المجلد</label>
-            <input id="courseInput" class="input" list="courseSuggestions" placeholder="مثال: المتحكم الدقيق" required />
-            <datalist id="courseSuggestions"></datalist>
-          </div>
+      <div id="urlDropzone" class="composer-body">
+        <textarea
+          id="urlsInput"
+          class="urls-textarea ltr mono"
+          placeholder="https://www.youtube.com/watch?v=...&#10;https://www.youtube.com/playlist?list=...&#10;https://drive.google.com/file/d/.../view"
+          aria-label="روابط YouTube أو Google Drive"
+          required
+        ></textarea>
+      </div>
 
-          <div class="field">
-            <label for="urlsInput">
-              <span>الروابط (رابط لكل سطر)</span>
-              <span id="urlCountTag" class="url-count-tag">0 روابط</span>
-            </label>
-            <textarea id="urlsInput" class="textarea ltr mono" placeholder="https://www.youtube.com/watch?v=...&#10;https://www.youtube.com/playlist?list=...&#10;https://drive.google.com/file/d/.../view&#10;https://drive.google.com/drive/folders/..." required></textarea>
-          </div>
+      <div class="composer-foot">
+        <div class="composer-meta">
+          <span id="urlCountTag" class="url-counter tabular">0 روابط</span>
+          <span class="meta-sep" aria-hidden="true">·</span>
+          <button id="importTxtBtn" class="text-action" type="button" title="استيراد ملف روابط أو سحبه إلى الصندوق">
+            <svg class="svg-ico xs" viewBox="0 0 24 24">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <path d="M14 2v6h6M12 18v-6M9.5 14.5L12 12l2.5 2.5"/>
+            </svg>
+            <span>استيراد <span class="ltr">.txt</span></span>
+          </button>
+          <input id="txtFileInput" type="file" accept=".txt,text/plain" style="display:none;" />
         </div>
 
-        <div class="composer-footer">
-          <button id="enqueueBtn" class="btn btn-primary btn-full" type="submit">إضافة وبدء التفريغ</button>
-          <span id="enqueueStatus" class="hint">
-            <span id="modeSummaryHint">وضع التوفير: Eco</span>
-          </span>
-        </div>
-      </form>
-    </section>
-
-    <details class="logs-panel">
-      <summary>
-        <span style="display:inline-flex;align-items:center;gap:7px;">
-          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="4 17 10 11 4 5"/>
-            <line x1="12" y1="19" x2="20" y2="19"/>
+        <button id="enqueueBtn" class="btn btn-primary composer-cta" type="submit">
+          <span>ابدأ التفريغ</span>
+          <svg class="svg-ico sm" viewBox="0 0 24 24">
+            <path d="M19 12H5M11 18l-6-6 6-6"/>
           </svg>
-          <span>سجل الأحداث المباشر</span>
-        </span>
-        <span id="logCount" class="log-count-pill mono">0</span>
-      </summary>
-      <div id="logBox" class="log-box"></div>
-    </details>
-  </aside>
+        </button>
+      </div>
+    </form>
 
-  <!-- Main Column: Queue Toolbar + Dense List -->
-  <section class="queue-column" aria-label="قائمة المهام والمحاضرات">
-    <div class="queue-toolbar">
-      <div class="toolbar-top">
-        <div class="kpi-strip" aria-label="ملخص الإحصائيات">
-          <span class="kpi-item">الإجمالي <span class="kpi-val" id="statTotal">0</span></span>
-          <span class="kpi-item done">مكتمل <span class="kpi-val" id="statDone">0</span></span>
-          <span class="kpi-item active">نشط <span class="kpi-val" id="statActive">0</span></span>
-          <span class="kpi-item">انتظار <span class="kpi-val" id="statQueued">0</span></span>
-          <span class="kpi-item failed">أخطاء <span class="kpi-val" id="statFailed">0</span></span>
+    <!-- COMPANION BENTO WIDGETS STACK -->
+    <div class="widgets-stack">
+      <!-- WIDGET 1: LIVE PROGRESS & THROUGHPUT -->
+      <div class="bento-card widget" aria-label="الإنجاز والسرعة">
+        <div class="progress-widget-hero">
+          <div class="ring-wrap" aria-hidden="true">
+            <svg class="ring-svg" viewBox="0 0 60 60">
+              <circle class="ring-track" cx="30" cy="30" r="24"/>
+              <circle id="progressRingFill" class="ring-fill" cx="30" cy="30" r="24" stroke-dasharray="150.8" stroke-dashoffset="150.8"/>
+            </svg>
+            <span id="ringPct" class="ring-pct mono">0%</span>
+          </div>
+
+          <div class="ring-copy">
+            <div class="widget-eyebrow">الإنجاز والسرعة</div>
+            <div class="ring-headline tabular">
+              <span id="ringDoneVal">0</span>
+              <span class="muted">من <span id="statTotal">0</span> محاضرة</span>
+            </div>
+            <div id="liveSpeedLine" class="speed-line">
+              <span class="speed-dot"></span>
+              <span id="liveSpeedText">جاهز لاستقبال الروابط</span>
+            </div>
+          </div>
         </div>
 
-        <div class="toolbar-actions">
-          <button class="btn btn-sm" id="pauseAllBtn" type="button" title="إيقاف الكل مؤقتاً">
-            <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round">
-              <rect x="6" y="4" width="4" height="16" rx="1"/>
-              <rect x="14" y="4" width="4" height="16" rx="1"/>
-            </svg>
-            <span>إيقاف الكل</span>
+        <div class="micro-grid tabular">
+          <div class="micro-pill is-done">
+            <span id="statDone" class="micro-val">0</span>
+            <span class="micro-lbl"><span class="micro-dot"></span>مكتمل</span>
+          </div>
+          <div class="micro-pill is-active">
+            <span id="statActive" class="micro-val">0</span>
+            <span class="micro-lbl"><span class="micro-dot"></span>نشط</span>
+          </div>
+          <div class="micro-pill">
+            <span id="statQueued" class="micro-val">0</span>
+            <span class="micro-lbl"><span class="micro-dot"></span>انتظار</span>
+          </div>
+          <div id="statFailedPill" class="micro-pill is-failed">
+            <span id="statFailed" class="micro-val">0</span>
+            <span class="micro-lbl"><span class="micro-dot"></span>أخطاء</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- WIDGET 2: QUICK CONTROL & SAVER -->
+      <div class="bento-card widget" aria-label="التحكم السريع ووضع التوفير">
+        <div class="widget-top">
+          <span class="widget-eyebrow">وضع التوفير</span>
+          <button id="activeModelChip" class="model-chip mono ltr" type="button" title="ترتيب نماذج الذكاء الاصطناعي — اضغط للتعديل">
+            <span id="activeModelText">gemini-3.6-flash</span>
           </button>
-          <button class="btn btn-sm" id="resumeAllBtn" type="button" title="استئناف جميع المهام">
-            <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
-              <polygon points="6 4 20 12 6 20 6 4"/>
-            </svg>
-            <span>استئناف</span>
+        </div>
+
+        <div class="saver-seg" role="radiogroup" aria-label="وضع التوفير">
+          <button class="saver-btn active" data-mode="eco" type="button">
+            <span class="saver-dot"></span><span>Eco</span>
           </button>
-          <button class="btn btn-sm" id="openFolderBtn" type="button" title="فتح مجلد التفريغات">
-            <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <button class="saver-btn" data-mode="balanced" type="button">
+            <span class="saver-dot"></span><span>Balanced</span>
+          </button>
+          <button class="saver-btn" data-mode="strict_audio" type="button">
+            <span class="saver-dot"></span><span>Strict</span>
+          </button>
+        </div>
+        <div id="modeSummaryHint" class="saver-desc">صوت خفيف 32k ورفع مباشر بدون إعادة ترميز</div>
+
+        <div class="widget-foot-controls">
+          <label class="inline-switch-label" for="quickKeepAudio" title="الاحتفاظ بملفات الصوت (MP3) بجانب التفريغ">
+            <span class="switch-sm">
+              <input id="quickKeepAudio" type="checkbox" />
+              <span class="switch-track"></span>
+            </span>
+            <span>حفظ <span class="ltr">MP3</span></span>
+          </label>
+
+          <button id="openFolderBtn" class="btn btn-sm" type="button" title="فتح مجلد الملفات المحفوظة">
+            <svg class="svg-ico xs" viewBox="0 0 24 24">
               <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
             </svg>
-            <span>فتح المجلد</span>
+            <span>فتح مجلد الملفات</span>
           </button>
-        </div>
-      </div>
-
-      <div class="toolbar-bottom">
-        <div class="segmented" role="tablist" aria-label="تصفية الحالة">
-          <button class="chip active" data-status="all" type="button">الكل</button>
-          <button class="chip" data-status="active" type="button">نشط</button>
-          <button class="chip" data-status="done" type="button">مكتمل</button>
-          <button class="chip" data-status="paused" type="button">متوقف</button>
-          <button class="chip" data-status="failed" type="button">أخطاء</button>
-        </div>
-
-        <select id="courseFilter" class="select course-select" aria-label="تصفية حسب المادة">
-          <option value="all">كل المواد</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="jobs-container">
-      <div id="jobsList" class="jobs-list">
-        <div class="empty-state">
-          <div class="empty-icon">
-            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-              <polyline points="14 2 14 8 20 8"/>
-              <line x1="16" y1="13" x2="8" y2="13"/>
-              <line x1="16" y1="17" x2="8" y2="17"/>
-            </svg>
-          </div>
-          <strong>لا توجد محاضرات في القائمة بعد</strong>
-          <p>أدخل اسم المادة والصق روابط YouTube أو Google Drive في اللوحة الجانبية للبدء.</p>
         </div>
       </div>
     </div>
   </section>
+
+  <!-- COURSES STRIP (clickable tactile course chips, synced with #courseFilter) -->
+  <nav id="coursesStrip" class="courses-strip hidden" aria-label="تصفية حسب المادة"></nav>
+  <select id="courseFilter" style="display:none;" aria-hidden="true">
+    <option value="all">كل المواد</option>
+  </select>
+
+  <!-- SERENE EMPTY WHISPER (only when 0 jobs) -->
+  <div id="emptyWhisper" class="empty-whisper">
+    الصق رابط محاضرة أو قائمة تشغيل في الأعلى للبدء — التفريغات تُحفظ تلقائياً على جهازك بصيغة Markdown.
+  </div>
+
+  <!-- CALM QUEUE SECTION -->
+  <section id="queueSection" class="queue-section hidden" aria-label="قائمة المحاضرات">
+    <div class="queue-toolbar">
+      <div class="filter-tabs" role="tablist" aria-label="تصفية الحالة">
+        <button class="tab-btn active" data-status="all" type="button">الكل <span id="cntAll" class="tab-count tabular">0</span></button>
+        <button class="tab-btn" data-status="active" type="button">نشط <span id="cntActive" class="tab-count tabular">0</span></button>
+        <button class="tab-btn" data-status="done" type="button">مكتمل <span id="cntDone" class="tab-count tabular">0</span></button>
+        <button class="tab-btn" data-status="paused" type="button">متوقف <span id="cntPaused" class="tab-count tabular">0</span></button>
+        <button class="tab-btn" data-status="failed" type="button">أخطاء <span id="cntFailed" class="tab-count tabular">0</span></button>
+      </div>
+
+      <div class="toolbar-end">
+        <div class="mini-search">
+          <svg class="svg-ico xs" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="7.5"/>
+            <path d="M20 20l-3.8-3.8"/>
+          </svg>
+          <input id="queueSearch" type="search" placeholder="بحث في المحاضرات..." aria-label="بحث في المحاضرات" />
+        </div>
+
+        <button id="pauseAllBtn" class="icon-btn bordered" type="button" title="إيقاف الكل مؤقتاً" aria-label="إيقاف الكل">
+          <svg class="svg-ico sm" viewBox="0 0 24 24">
+            <rect x="6" y="4" width="4" height="16" rx="1"/>
+            <rect x="14" y="4" width="4" height="16" rx="1"/>
+          </svg>
+        </button>
+        <button id="resumeAllBtn" class="icon-btn bordered" type="button" title="استئناف الكل" aria-label="استئناف">
+          <svg class="svg-ico sm" viewBox="0 0 24 24">
+            <polygon points="6 4 20 12 6 20 6 4"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div id="jobsList" class="jobs-card"></div>
+  </section>
 </main>
 
-<!-- Settings Modal -->
-<div id="settingsModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
-  <div class="modal">
-    <div class="modal-header">
-      <h2 id="settingsTitle">الإعدادات</h2>
-      <button class="btn btn-ghost btn-icon" data-close="settingsModal" type="button" aria-label="إغلاق">
-        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
-          <line x1="18" y1="6" x2="6" y2="18"/>
-          <line x1="6" y1="6" x2="18" y2="18"/>
+<!-- QUIET CENTERED FOOTER & COLLAPSIBLE LOGS -->
+<footer class="container page-footer">
+  <div class="footer-bar">
+    <button id="toggleLogsBtn" class="logs-toggle" type="button" aria-expanded="false">
+      <svg class="svg-ico xs" viewBox="0 0 24 24">
+        <polyline points="4 17 10 11 4 5"/>
+        <line x1="12" y1="19" x2="20" y2="19"/>
+      </svg>
+      <span>سجل الأحداث</span>
+      <span id="logCount" class="logs-badge mono empty">0</span>
+    </button>
+  </div>
+
+  <div id="logPanel" class="logs-panel">
+    <div class="logs-head">
+      <span>سجل الأحداث المباشر</span>
+      <button id="clearLogsBtn" class="text-action" type="button">مسح السجل</button>
+    </div>
+    <div id="logBox" class="logs-body">
+      <div class="field-hint">لا توجد أحداث مسجلة بعد.</div>
+    </div>
+  </div>
+</footer>
+
+<!-- SLIDE-OVER TRANSCRIPT READER SHEET -->
+<div id="transcriptModal" class="sheet-backdrop" role="dialog" aria-modal="true" aria-labelledby="transcriptTitle">
+  <div class="sheet-panel">
+    <div class="sheet-header">
+      <div class="sheet-title-wrap">
+        <h2 id="transcriptTitle" class="sheet-title">معاينة التفريغ</h2>
+        <span id="transcriptStats" class="sheet-stats">قارئ التفريغ النصي</span>
+      </div>
+      <button class="icon-btn sm" data-close="transcriptModal" type="button" aria-label="إغلاق">
+        <svg class="svg-ico" viewBox="0 0 24 24">
+          <path d="M18 6L6 18M6 6l12 12"/>
         </svg>
       </button>
     </div>
 
-    <form id="settingsForm">
+    <div class="sheet-saved-bar">
+      <span class="saved-badge">
+        <svg class="svg-ico xs" viewBox="0 0 24 24">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+        <span>محفوظ تلقائياً على جهازك</span>
+      </span>
+      <span id="transcriptFilePath" class="saved-path mono ltr"></span>
+    </div>
+
+    <div class="sheet-toolbar">
+      <div class="sheet-actions">
+        <button id="copyTranscriptBtn" class="btn btn-primary btn-sm" type="button">
+          <svg class="svg-ico xs" viewBox="0 0 24 24">
+            <rect x="9" y="9" width="13" height="13" rx="2"/>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+          </svg>
+          <span>نسخ</span>
+        </button>
+        <button id="toggleRawBtn" class="btn btn-ghost btn-sm" type="button">Markdown خام</button>
+        <button id="downloadTranscriptBtn" class="btn btn-ghost btn-sm" type="button">
+          <svg class="svg-ico xs" viewBox="0 0 24 24">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          <span>تنزيل <span class="ltr">.md</span></span>
+        </button>
+        <div class="font-stepper" aria-label="حجم خط القراءة">
+          <button id="fontDecBtn" type="button" title="تصغير الخط">A-</button>
+          <button id="fontIncBtn" type="button" title="تكبير الخط">A+</button>
+        </div>
+      </div>
+
+      <div class="reader-search-wrap">
+        <span id="searchMatchCount" class="match-count tabular"></span>
+        <input id="transcriptSearch" class="reader-search" type="search" placeholder="بحث داخل النص..." />
+      </div>
+    </div>
+
+    <div class="sheet-scroll">
+      <article id="transcriptContent" class="transcript-article">جاري التحميل...</article>
+    </div>
+  </div>
+</div>
+
+<!-- CLEAN SETTINGS MODAL -->
+<div id="settingsModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+  <div class="modal-card">
+    <div class="modal-head">
+      <h2 id="settingsTitle">الإعدادات</h2>
+      <button class="icon-btn sm" data-close="settingsModal" type="button" aria-label="إغلاق">
+        <svg class="svg-ico" viewBox="0 0 24 24">
+          <path d="M18 6L6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <form id="settingsForm" class="modal-form">
       <div class="modal-body">
-        <div class="settings-section">
-          <div class="section-label">الحساب والتخزين</div>
+        <div class="settings-group">
+          <div class="group-eyebrow">الحساب والتخزين</div>
           <div class="field">
             <label for="cfgApiKey">
               <span>Gemini API Key</span>
-              <span id="apiKeyHint" class="hint mono ltr"></span>
+              <span id="apiKeyHint" class="field-hint mono ltr"></span>
             </label>
-            <input id="cfgApiKey" type="password" class="input ltr mono" placeholder="اتركه فارغاً للاحتفاظ بالمفتاح الحالي..." autocomplete="off" />
+            <input id="cfgApiKey" type="password" class="input ltr mono ar-ph" placeholder="اتركه فارغاً للاحتفاظ بالمفتاح الحالي..." autocomplete="off" />
           </div>
           <div class="field">
-            <label for="cfgOutputDir">مجلد حفظ التفريغات (Output Directory)</label>
+            <label for="cfgOutputDir">مجلد حفظ التفريغات</label>
             <input id="cfgOutputDir" type="text" class="input ltr mono" required />
           </div>
         </div>
 
-        <div class="settings-section">
-          <div class="section-label">التحميل وتوفير البيانات</div>
+        <div class="settings-group">
+          <div class="group-eyebrow">التحميل وتوفير البيانات</div>
           <div class="field">
             <label for="cfgDownloadMode">وضع التوفير (Download Mode)</label>
             <select id="cfgDownloadMode" class="select">
-              <option value="eco">توفير أقصى (Eco) — صوت خفيف 32k ورفع مباشر بدون إعادة ترميز</option>
-              <option value="balanced">متوازن (Balanced) — صوت 64k مع بديل طارئ عند الحاجة</option>
-              <option value="strict_audio">صوت فقط صارم (Strict Audio) — رفض تحميل أي فيديو MP4</option>
+              <option value="eco">Eco — توفير أقصى (صوت 32k ورفع مباشر)</option>
+              <option value="balanced">Balanced — متوازن (صوت 64k مع بديل طارئ)</option>
+              <option value="strict_audio">Strict Audio — صوت فقط صارم بدون فيديو</option>
             </select>
           </div>
 
-          <div class="form-row-2">
+          <div class="row-2">
             <div class="field">
-              <label for="cfgBitrate">جودة الصوت (Bitrate)</label>
+              <label for="cfgBitrate">جودة الصوت</label>
               <select id="cfgBitrate" class="select ltr">
                 <option value="32k">32k (~14 MB/hr)</option>
                 <option value="48k">48k (~21 MB/hr)</option>
@@ -1264,22 +2059,22 @@
             </div>
           </div>
 
-          <div class="form-row-2">
+          <div class="row-2">
             <div class="field">
-              <label for="cfgDownloadWorkers">عمال التحميل المتزامنون</label>
+              <label for="cfgDownloadWorkers">عمال التحميل</label>
               <input id="cfgDownloadWorkers" type="number" min="1" max="10" class="input ltr mono" required />
             </div>
             <div class="field">
-              <label for="cfgTranscribeWorkers">عمال التفريغ (1 للـ Free Tier)</label>
+              <label for="cfgTranscribeWorkers">عمال التفريغ</label>
               <input id="cfgTranscribeWorkers" type="number" min="1" max="8" class="input ltr mono" required />
             </div>
           </div>
 
           <label class="toggle-row" for="cfgKeepAudio">
-            <div>
+            <span class="toggle-copy">
               <strong>الاحتفاظ بملفات الصوت (MP3) بجانب التفريغ</strong>
-              <span class="hint">حفظ نسخة MP3 داخل مجلد <span class="mono ltr">audio/</span> بدلاً من حذفها بعد التفريغ.</span>
-            </div>
+              <span class="field-hint">حفظ نسخة MP3 داخل مجلد <span class="mono ltr">audio/</span> بدلاً من حذفها بعد التفريغ.</span>
+            </span>
             <span class="switch">
               <input id="cfgKeepAudio" type="checkbox" />
               <span class="switch-track"></span>
@@ -1287,61 +2082,21 @@
           </label>
         </div>
 
-        <div class="settings-section">
-          <div class="section-label">نماذج Gemini</div>
+        <div class="settings-group">
+          <div class="group-eyebrow">الذكاء الاصطناعي</div>
           <div class="field">
             <label for="cfgModels">ترتيب نماذج الذكاء الاصطناعي (Gemini Models)</label>
-            <textarea id="cfgModels" class="textarea ltr mono" style="min-height:66px;" placeholder="gemini-3.6-flash, gemini-3-flash-preview, gemini-3.5-flash, gemini-3.8-flash, gemini-3.5-flash-lite, gemini-3.1-flash-lite"></textarea>
-            <div class="hint">
-              يُجرَّب كل نموذج بالترتيب مع تخطي تلقائي عند 429/503 أو التفريغ الناقص.
-            </div>
+            <textarea id="cfgModels" class="textarea ltr mono" placeholder="gemini-3.6-flash, gemini-3-flash-preview, gemini-3.5-flash, gemini-3.8-flash"></textarea>
+            <span class="field-hint">يُجرَّب كل نموذج بالترتيب مع انتقال تلقائي عند الضغط أو التفريغ الناقص.</span>
           </div>
         </div>
       </div>
 
-      <div class="modal-footer">
-        <button class="btn" data-close="settingsModal" type="button">إلغاء</button>
+      <div class="modal-foot">
+        <button class="btn btn-ghost" data-close="settingsModal" type="button">إلغاء</button>
         <button class="btn btn-primary" type="submit">حفظ الإعدادات</button>
       </div>
     </form>
-  </div>
-</div>
-
-<!-- Transcript Preview Modal -->
-<div id="transcriptModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="transcriptTitle">
-  <div class="modal modal-lg">
-    <div class="modal-header">
-      <h2 id="transcriptTitle">معاينة التفريغ</h2>
-      <button class="btn btn-ghost btn-icon" data-close="transcriptModal" type="button" aria-label="إغلاق">
-        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
-          <line x1="18" y1="6" x2="6" y2="18"/>
-          <line x1="6" y1="6" x2="18" y2="18"/>
-        </svg>
-      </button>
-    </div>
-
-    <div class="modal-body">
-      <div id="transcriptSavedNote" class="saved-strip">
-        <span class="saved-strip-left">
-          <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="20 6 9 17 4 12"/>
-          </svg>
-          <span>محفوظ تلقائياً على جهازك</span>
-        </span>
-        <span id="transcriptFilePath" class="saved-path mono ltr"></span>
-      </div>
-
-      <div class="transcript-toolbar">
-        <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
-          <button id="copyTranscriptBtn" class="btn btn-primary btn-sm" type="button">نسخ النص</button>
-          <button id="downloadTranscriptBtn" class="btn btn-sm" type="button">تنزيل .md</button>
-          <button id="toggleRawBtn" class="btn btn-ghost btn-sm" type="button">Markdown الخام</button>
-        </div>
-        <input id="transcriptSearch" class="input transcript-search" type="search" placeholder="بحث داخل النص..." />
-      </div>
-
-      <div id="transcriptContent" class="transcript-view">جاري التحميل...</div>
-    </div>
   </div>
 </div>
 
@@ -1349,40 +2104,53 @@
 
 <script>
 (() => {
+  const RING_CIRCUMFERENCE = 2 * Math.PI * 24;
+
   const state = {
     config: {},
     courses: [],
     jobsById: new Map(),
     online: true,
+    sseDisconnected: false,
     ffmpeg: { available: true, path: "", version: "" },
     courseFilter: "all",
     statusFilter: "all",
+    searchQuery: "",
     logs: [],
+    readerFontSize: 16,
     currentTranscript: { title: "", filename: "transcript.md", content: "", rawMode: false, query: "" }
   };
 
+  const MODE_META = {
+    eco:          { name: "Eco",      desc: "صوت خفيف 32k ورفع مباشر بدون إعادة ترميز" },
+    balanced:     { name: "Balanced", desc: "صوت 64k متوازن مع بديل طارئ عند الحاجة" },
+    strict_audio: { name: "Strict",   desc: "صوت فقط صارم — يرفض تحميل أي ملفات فيديو" }
+  };
+
   const STAGE_MAP = {
-    queued:       { label: "في الانتظار", cls: "queued" },
-    downloading:  { label: "تحميل",       cls: "downloading" },
-    converting:   { label: "تحويل",       cls: "converting" },
-    transcribing: { label: "تفريغ",       cls: "transcribing" },
-    cleaning:     { label: "تنظيف",       cls: "cleaning" },
-    done:         { label: "مكتمل",       cls: "done" },
-    paused:       { label: "متوقف",       cls: "paused" },
-    failed:       { label: "فشل",         cls: "failed" },
-    cancelled:    { label: "ملغي",        cls: "cancelled" }
+    queued:       { label: "في الانتظار", kind: "queued" },
+    downloading:  { label: "جاري التحميل", kind: "active" },
+    converting:   { label: "تحويل الصوت", kind: "active" },
+    transcribing: { label: "جاري التفريغ", kind: "active" },
+    cleaning:     { label: "تنقيح النص", kind: "active" },
+    done:         { label: "مكتمل", kind: "done" },
+    paused:       { label: "متوقف", kind: "paused" },
+    failed:       { label: "فشل", kind: "failed" },
+    cancelled:    { label: "ملغي", kind: "queued" }
   };
 
   const ACTIVE_STATUSES = new Set(["downloading", "converting", "transcribing", "cleaning"]);
 
   const ICONS = {
-    pause: '<svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>',
-    play: '<svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 4 20 12 6 20 6 4"/></svg>',
-    retry: '<svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>',
-    cancel: '<svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
-    trash: '<svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>',
-    doc: '<svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>',
-    alert: '<svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>'
+    pause: '<svg class="svg-ico xs" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>',
+    play: '<svg class="svg-ico xs" viewBox="0 0 24 24"><polygon points="6 4 20 12 6 20 6 4"/></svg>',
+    retry: '<svg class="svg-ico xs" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>',
+    cancel: '<svg class="svg-ico xs" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>',
+    trash: '<svg class="svg-ico xs" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>',
+    book: '<svg class="svg-ico xs" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>',
+    alert: '<svg class="svg-ico xs" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5"/><path d="M12 8v4M12 16h.01"/></svg>',
+    ext: '<svg class="svg-ico xs" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>',
+    folder: '<svg class="svg-ico xs" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>'
   };
 
   const $ = (id) => document.getElementById(id);
@@ -1396,6 +2164,10 @@
       .replace(/'/g, "&#39;");
   }
 
+  function cleanMediaTitle(raw) {
+    return String(raw || "").replace(/\.(mp4|mkv|webm|m4a|mp3|wav|ogg|mov|avi)$/i, "");
+  }
+
   function toast(msg, type = "info") {
     const el = document.createElement("div");
     el.className = `toast ${type}`;
@@ -1403,10 +2175,19 @@
     $("toastWrap").appendChild(el);
     setTimeout(() => {
       el.style.opacity = "0";
-      el.style.transition = "opacity 0.22s";
-      setTimeout(() => el.remove(), 240);
-    }, 3400);
+      el.style.transition = "opacity 0.2s";
+      setTimeout(() => el.remove(), 220);
+    }, 3000);
   }
+
+  // Theme Toggle
+  function toggleTheme() {
+    const isDark = document.documentElement.getAttribute("data-theme") === "dark";
+    const next = isDark ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", next);
+    try { localStorage.setItem("gv_theme", next); } catch {}
+  }
+  $("themeToggleBtn").addEventListener("click", toggleTheme);
 
   function formatSpeed(bps) {
     if (!bps || bps <= 0) return "";
@@ -1441,10 +2222,16 @@
   }
 
   function renderLogs() {
-    $("logCount").textContent = state.logs.length;
+    const badge = $("logCount");
+    badge.textContent = state.logs.length;
+    badge.classList.toggle("empty", state.logs.length === 0);
+    if (state.logs.length === 0) {
+      $("logBox").innerHTML = '<div class="field-hint">لا توجد أحداث مسجلة بعد.</div>';
+      return;
+    }
     $("logBox").innerHTML = state.logs.map((l) => `
       <div class="log-line">
-        <span class="log-time mono">${escapeHtml(l.time)}</span>
+        <span class="log-time mono ltr">${escapeHtml(l.time)}</span>
         <span class="log-lvl-${escapeHtml(l.level)}">${escapeHtml(l.message)}</span>
       </div>
     `).join("");
@@ -1470,105 +2257,259 @@
     return c ? c.name : "";
   }
 
+  // URL Counter & .txt Drag-and-Drop
   function updateUrlCounter() {
     const raw = $("urlsInput").value || "";
     const count = raw.split(/\r?\n/).map((s) => s.trim()).filter((s) => s && !s.startsWith("#")).length;
     const el = $("urlCountTag");
-    if (el) {
-      el.textContent = count === 1 ? "رابط واحد" : `${count} روابط`;
-      el.classList.toggle("has-urls", count > 0);
-    }
+    el.textContent = count === 1 ? "رابط واحد" : `${count} روابط`;
+    el.classList.toggle("has-urls", count > 0);
   }
   $("urlsInput").addEventListener("input", updateUrlCounter);
 
-  // Rendering
-  function renderHeader() {
-    const netBadge = $("netBadge");
-    const netText = $("netText");
-    if (state.online) {
-      netBadge.className = "status-item ok";
-      netText.textContent = "متصل";
-    } else {
-      netBadge.className = "status-item warn";
-      netText.textContent = "غير متصل — انتظار تلقائي";
+  $("urlsInput").addEventListener("keydown", (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+      e.preventDefault();
+      $("enqueueForm").requestSubmit();
     }
+  });
 
-    const ff = state.ffmpeg || {};
-    const ffBadge = $("ffmpegBadge");
-    const ffText = $("ffmpegText");
-    if (ff.available) {
-      ffBadge.className = "status-item ok";
-      ffText.textContent = "FFmpeg";
-      ffBadge.title = ff.version || ff.path || "FFmpeg جاهز";
+  function loadTxtFile(file) {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const content = String(reader.result || "").trim();
+      if (!content) {
+        toast("الملف فارغ", "warn");
+        return;
+      }
+      const prev = $("urlsInput").value.trim();
+      $("urlsInput").value = prev ? `${prev}\n${content}` : content;
+      updateUrlCounter();
+      toast(`تم استيراد الروابط من ${file.name}`);
+    };
+    reader.readAsText(file);
+  }
+
+  $("importTxtBtn").addEventListener("click", () => $("txtFileInput").click());
+  $("txtFileInput").addEventListener("change", (e) => {
+    const file = e.target.files && e.target.files[0];
+    loadTxtFile(file);
+    e.target.value = "";
+  });
+
+  const composerCard = $("enqueueForm");
+  ["dragenter", "dragover"].forEach((evt) => {
+    composerCard.addEventListener(evt, (e) => {
+      e.preventDefault();
+      composerCard.classList.add("drag-over");
+    });
+  });
+  ["dragleave", "drop"].forEach((evt) => {
+    composerCard.addEventListener(evt, (e) => {
+      e.preventDefault();
+      composerCard.classList.remove("drag-over");
+    });
+  });
+  composerCard.addEventListener("drop", (e) => {
+    const file = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+    if (file) {
+      loadTxtFile(file);
     } else {
-      ffBadge.className = "status-item err";
-      ffText.textContent = "FFmpeg مفقود";
-      ffBadge.title = ff.error || "يرجى تثبيت FFmpeg وإضافته إلى PATH";
+      const droppedText = e.dataTransfer && e.dataTransfer.getData("text/plain");
+      if (droppedText) {
+        const prev = $("urlsInput").value.trim();
+        $("urlsInput").value = prev ? `${prev}\n${droppedText.trim()}` : droppedText.trim();
+        updateUrlCounter();
+      }
+    }
+  });
+
+  // Render Header + Quick Control Widget
+  function renderHeaderAndControls() {
+    const ind = $("healthIndicator");
+    const lbl = $("healthLabel");
+    const ff = state.ffmpeg || {};
+
+    if (!ff.available) {
+      ind.className = "health-indicator is-err";
+      lbl.textContent = "FFmpeg مفقود";
+      ind.title = ff.error || "يرجى تثبيت FFmpeg وإضافته إلى PATH";
+    } else if (!state.online) {
+      ind.className = "health-indicator is-warn";
+      lbl.textContent = "غير متصل";
+      ind.title = "انقطع الاتصال بالإنترنت";
+    } else if (state.sseDisconnected) {
+      ind.className = "health-indicator is-warn";
+      lbl.textContent = "إعادة الاتصال...";
+      ind.title = "جاري إعادة الاتصال بالخادم المحلي";
+    } else {
+      ind.className = "health-indicator is-ok";
+      lbl.textContent = "";
+      ind.title = `متصل · ${ff.version || "FFmpeg جاهز"}`;
     }
 
     const hasKey = Boolean(state.config && state.config.has_api_key);
     $("apiKeyBanner").classList.toggle("hidden", hasKey);
 
-    const mode = (state.config && state.config.download_mode) || "eco";
+    const rawMode = (state.config && state.config.download_mode) || "eco";
+    const mode = MODE_META[rawMode] ? rawMode : "eco";
     const keepAudio = Boolean(state.config && state.config.keep_audio);
-    const modeLabels = {
-      eco: "توفير أقصى (Eco) · صوت 32k",
-      balanced: "متوازن (Balanced) · صوت 64k",
-      strict_audio: "صوت فقط صارم (Strict)"
-    };
-    const validMode = modeLabels[mode] ? mode : "eco";
-    const quickSel = $("quickModeSelect");
-    const quickPill = $("quickModePill");
-    if (quickSel) quickSel.value = validMode;
-    if (quickPill) quickPill.className = `mode-control mode-${validMode}`;
-    const summaryEl = $("modeSummaryHint");
-    if (summaryEl) {
-      summaryEl.textContent = `وضع التوفير: ${modeLabels[validMode]} · حفظ MP3: ${keepAudio ? "نعم" : "لا"}`;
+
+    $("quickModeSelect").value = mode;
+    $("quickModePill").className = `mode-pill mode-${mode}`;
+    $("modeSummaryHint").textContent = MODE_META[mode].desc;
+    $("quickKeepAudio").checked = keepAudio;
+
+    document.querySelectorAll(".saver-btn[data-mode]").forEach((btn) => {
+      btn.classList.toggle("active", btn.dataset.mode === mode);
+    });
+
+    const models = state.config && state.config.models;
+    let primaryModel = "gemini-3.6-flash";
+    if (Array.isArray(models) && models.length > 0) {
+      primaryModel = models[0];
+    } else if (typeof models === "string" && models.trim()) {
+      primaryModel = models.split(/[,\n]/)[0].trim();
     }
+    $("activeModelText").textContent = primaryModel;
   }
 
-  function renderCourseControls() {
-    const select = $("courseFilter");
-    const current = state.courseFilter;
-    const opts = ['<option value="all">كل المواد</option>'];
-    const datalist = [];
-    for (const c of state.courses) {
-      opts.push(`<option value="${escapeHtml(c.id)}">${escapeHtml(c.name)}</option>`);
-      datalist.push(`<option value="${escapeHtml(c.name)}"></option>`);
+  // Render Courses Strip + Autocomplete + Hidden #courseFilter
+  function renderCourses() {
+    const allJobs = [...state.jobsById.values()];
+    const counts = new Map();
+    for (const j of allJobs) {
+      counts.set(j.course_id, (counts.get(j.course_id) || 0) + 1);
     }
-    select.innerHTML = opts.join("");
-    if ([...select.options].some((o) => o.value === current)) {
-      select.value = current;
-    } else {
+
+    if (state.courseFilter !== "all" && !state.courses.some((c) => c.id === state.courseFilter)) {
       state.courseFilter = "all";
-      select.value = "all";
     }
-    $("courseSuggestions").innerHTML = datalist.join("");
+
+    $("courseSuggestions").innerHTML = state.courses
+      .map((c) => `<option value="${escapeHtml(c.name)}"></option>`)
+      .join("");
+
+    const sel = $("courseFilter");
+    const opts = [`<option value="all">كل المواد (${allJobs.length})</option>`];
+    for (const c of state.courses) {
+      const cnt = counts.get(c.id) || 0;
+      opts.push(`<option value="${escapeHtml(c.id)}">${escapeHtml(c.name)} (${cnt})</option>`);
+    }
+    sel.innerHTML = opts.join("");
+    sel.value = state.courseFilter;
+
+    const strip = $("coursesStrip");
+    if (state.courses.length === 0) {
+      strip.classList.add("hidden");
+      strip.innerHTML = "";
+      return;
+    }
+    strip.classList.remove("hidden");
+
+    const chips = [
+      `<button class="course-chip ${state.courseFilter === "all" ? "active" : ""}" data-course-id="all" type="button">
+        <span>كل المواد</span>
+        <span class="course-chip-count tabular">${allJobs.length}</span>
+      </button>`
+    ];
+    for (const c of state.courses) {
+      const cnt = counts.get(c.id) || 0;
+      const isAct = state.courseFilter === c.id;
+      chips.push(`
+        <button class="course-chip ${isAct ? "active" : ""}" data-course-id="${escapeHtml(c.id)}" type="button">
+          ${ICONS.folder}
+          <span>${escapeHtml(c.name)}</span>
+          <span class="course-chip-count tabular">${cnt}</span>
+        </button>
+      `);
+    }
+    strip.innerHTML = chips.join("");
   }
 
-  function renderStatsAndJobs() {
+  // Render Live Progress Widget + Queue
+  function renderStatsAndQueue() {
     const allJobs = [...state.jobsById.values()];
     const courseFiltered = state.courseFilter === "all"
       ? allJobs
       : allJobs.filter((j) => j.course_id === state.courseFilter);
 
-    let done = 0, active = 0, queued = 0, failed = 0;
+    let done = 0, active = 0, queued = 0, paused = 0, failed = 0, totalSpeed = 0;
     for (const j of courseFiltered) {
       if (j.status === "done") done++;
-      else if (ACTIVE_STATUSES.has(j.status)) active++;
+      else if (ACTIVE_STATUSES.has(j.status)) {
+        active++;
+        if (j.speed_bps && j.speed_bps > 0) totalSpeed += Number(j.speed_bps);
+      } else if (j.status === "queued") queued++;
+      else if (j.status === "paused") paused++;
       else if (j.status === "failed") failed++;
-      else if (j.status === "queued" || j.status === "paused") queued++;
     }
-    $("statTotal").textContent = courseFiltered.length;
+
+    const total = courseFiltered.length;
+    const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+
+    // Widget 1: Ring & Stats
+    $("statTotal").textContent = total;
+    $("ringDoneVal").textContent = done;
     $("statDone").textContent = done;
     $("statActive").textContent = active;
     $("statQueued").textContent = queued;
     $("statFailed").textContent = failed;
+    $("statFailedPill").classList.toggle("has-val", failed > 0);
 
+    $("ringPct").textContent = `${pct}%`;
+    const ringEl = $("progressRingFill");
+    const offset = RING_CIRCUMFERENCE * (1 - pct / 100);
+    ringEl.style.strokeDashoffset = offset.toFixed(2);
+    ringEl.classList.toggle("is-done", total > 0 && done === total);
+
+    const speedLine = $("liveSpeedLine");
+    const speedText = $("liveSpeedText");
+    if (active > 0) {
+      speedLine.className = "speed-line is-active";
+      const spd = formatSpeed(totalSpeed);
+      speedText.innerHTML = spd
+        ? `<span class="mono ltr">${escapeHtml(spd)}</span> · ${active} قيد المعالجة`
+        : `${active} قيد التفريغ الآن`;
+    } else if (total > 0 && done === total) {
+      speedLine.className = "speed-line is-done";
+      speedText.textContent = "اكتملت جميع المحاضرات وحُفظت على جهازك";
+    } else if (paused > 0) {
+      speedLine.className = "speed-line";
+      speedText.textContent = `${paused} مهام متوقفة مؤقتاً`;
+    } else if (failed > 0) {
+      speedLine.className = "speed-line";
+      speedText.textContent = `${failed} مهام تحتاج إعادة محاولة`;
+    } else {
+      speedLine.className = "speed-line";
+      speedText.textContent = "جاهز لاستقبال الروابط";
+    }
+
+    // Queue visibility
+    const hasAnyJobs = allJobs.length > 0;
+    $("emptyWhisper").style.display = hasAnyJobs ? "none" : "block";
+    $("queueSection").classList.toggle("hidden", !hasAnyJobs);
+    if (!hasAnyJobs) return;
+
+    $("cntAll").textContent = total;
+    $("cntActive").textContent = active + queued;
+    $("cntDone").textContent = done;
+    $("cntPaused").textContent = paused;
+    $("cntFailed").textContent = failed;
+
+    const q = state.searchQuery.trim().toLowerCase();
     const filtered = courseFiltered.filter((j) => {
-      if (state.statusFilter === "all") return true;
-      if (state.statusFilter === "active") return ACTIVE_STATUSES.has(j.status) || j.status === "queued";
-      return j.status === state.statusFilter;
+      if (state.statusFilter === "active") {
+        if (!(ACTIVE_STATUSES.has(j.status) || j.status === "queued")) return false;
+      } else if (state.statusFilter !== "all" && j.status !== state.statusFilter) {
+        return false;
+      }
+      if (q) {
+        const hay = `${j.title || ""} ${courseNameById(j.course_id)} ${j.url || ""}`.toLowerCase();
+        if (!hay.includes(q)) return false;
+      }
+      return true;
     });
 
     const rank = (s) => {
@@ -1587,13 +2528,7 @@
 
     const container = $("jobsList");
     if (filtered.length === 0) {
-      container.innerHTML = `
-        <div class="empty-state">
-          <div class="empty-icon">${ICONS.doc}</div>
-          <strong>لا توجد مهام في هذا العرض</strong>
-          <p>${allJobs.length === 0 ? "أدخل اسم المادة والصق روابط YouTube أو Google Drive في اللوحة الجانبية." : "جرّب تغيير تصفية المادة أو الحالة."}</p>
-        </div>
-      `;
+      container.innerHTML = '<div class="filter-empty">لا توجد محاضرات مطابقة للتصفية الحالية.</div>';
       return;
     }
 
@@ -1603,100 +2538,109 @@
   function renderJobRow(j) {
     const statusKey = j.status || "queued";
     const stageKey = STAGE_MAP[j.stage] ? j.stage : statusKey;
-    const stInfo = STAGE_MAP[stageKey] || { label: stageKey, cls: "queued" };
+    const stInfo = STAGE_MAP[stageKey] || { label: stageKey, kind: "queued" };
     const isActive = ACTIVE_STATUSES.has(statusKey);
 
     const rawPct = Number(j.progress || 0);
     const pct = Math.max(0, Math.min(100, statusKey === "done" ? 100 : rawPct));
-    const fillCls = statusKey === "done"
-      ? "done"
+    const showProgress = isActive || statusKey === "paused" || (statusKey === "failed" && pct > 0);
+    const fillCls = statusKey === "paused"
+      ? "is-paused"
       : statusKey === "failed"
-        ? "failed"
-        : statusKey === "paused"
-          ? "paused"
-          : statusKey === "queued"
-            ? "queued"
-            : "";
+        ? "is-failed"
+        : statusKey === "queued"
+          ? "is-queued"
+          : "";
 
     const isDrive = (j.source_type || "").toLowerCase().includes("drive");
-    const sourceBadge = isDrive
-      ? '<span class="source-tag drive">Drive</span>'
-      : '<span class="source-tag yt">YouTube</span>';
-
+    const sourceLabel = isDrive ? "Drive" : "YouTube";
     const courseName = courseNameById(j.course_id);
-    const seqStr = j.seq_num ? String(j.seq_num).padStart(3, "0") : "";
-    const speedStr = isActive ? formatSpeed(j.speed_bps) : "";
-    const etaStr = isActive ? formatEta(j.eta_seconds) : "";
-    const dlStr = j.bytes_downloaded > 0
-      ? (j.total_bytes > 0 ? `${formatBytes(j.bytes_downloaded)} / ${formatBytes(j.total_bytes)}` : formatBytes(j.bytes_downloaded))
-      : "";
+    const displayTitle = cleanMediaTitle(j.title || j.url || j.id);
 
-    const metrics = [];
-    if (speedStr) metrics.push(`<span class="ltr mono">${escapeHtml(speedStr)}</span>`);
-    if (dlStr) metrics.push(`<span class="ltr mono">${escapeHtml(dlStr)}</span>`);
-    if (etaStr) metrics.push(`<span>متبقي <span class="ltr mono">${escapeHtml(etaStr)}</span></span>`);
-    if (j.retries > 0) metrics.push(`<span>محاولات: <span class="mono">${j.retries}</span></span>`);
+    const titleEl = statusKey === "done"
+      ? `<button class="job-title job-title-btn" data-act="preview" data-id="${escapeHtml(j.id)}" type="button" title="قراءة التفريغ">${escapeHtml(displayTitle)}</button>`
+      : `<span class="job-title" title="${escapeHtml(displayTitle)}">${escapeHtml(displayTitle)}</span>`;
 
-    const metricsHtml = metrics.length
-      ? metrics.join('<span class="metric-sep">·</span>')
-      : (statusKey === "done"
-          ? "محفوظ تلقائياً على القرص"
-          : (statusKey === "queued" ? "في انتظار دور المعالجة" : ""));
+    const subParts = [];
+    if (courseName && state.courseFilter === "all") {
+      subParts.push(`<span>${escapeHtml(courseName)}</span>`);
+    }
+    if (j.seq_num) {
+      subParts.push(`<span class="mono">#${String(j.seq_num).padStart(2, "0")}</span>`);
+    }
+    if (j.url) {
+      subParts.push(`<a class="job-ext-link" href="${escapeHtml(j.url)}" target="_blank" rel="noopener noreferrer" title="فتح الرابط الأصلي">${ICONS.ext}</a>`);
+    }
 
     const actions = [];
     if (isActive || statusKey === "queued") {
-      actions.push(`<button class="btn btn-ghost btn-sm" data-act="pause" data-id="${escapeHtml(j.id)}" title="إيقاف مؤقت">${ICONS.pause}<span>إيقاف</span></button>`);
-      actions.push(`<button class="btn btn-danger-ghost btn-icon" data-act="cancel" data-id="${escapeHtml(j.id)}" title="إلغاء">${ICONS.cancel}</button>`);
+      actions.push(`<button class="btn btn-ghost btn-sm" data-act="pause" data-id="${escapeHtml(j.id)}" type="button" title="إيقاف مؤقت">${ICONS.pause}<span>إيقاف</span></button>`);
+      actions.push(`<button class="icon-btn sm danger" data-act="cancel" data-id="${escapeHtml(j.id)}" type="button" title="إلغاء">${ICONS.cancel}</button>`);
     } else if (statusKey === "paused") {
-      actions.push(`<button class="btn btn-sm" data-act="resume" data-id="${escapeHtml(j.id)}" title="استئناف">${ICONS.play}<span>استئناف</span></button>`);
-      actions.push(`<button class="btn btn-danger-ghost btn-icon" data-act="cancel" data-id="${escapeHtml(j.id)}" title="إلغاء">${ICONS.cancel}</button>`);
+      actions.push(`<button class="btn btn-subtle btn-sm" data-act="resume" data-id="${escapeHtml(j.id)}" type="button" title="استئناف">${ICONS.play}<span>استئناف</span></button>`);
+      actions.push(`<button class="icon-btn sm danger" data-act="cancel" data-id="${escapeHtml(j.id)}" type="button" title="إلغاء">${ICONS.cancel}</button>`);
     } else if (statusKey === "failed" || statusKey === "cancelled") {
-      actions.push(`<button class="btn btn-sm" data-act="retry" data-id="${escapeHtml(j.id)}">${ICONS.retry}<span>إعادة</span></button>`);
-      actions.push(`<button class="btn btn-danger-ghost btn-icon" data-act="delete" data-id="${escapeHtml(j.id)}" title="حذف">${ICONS.trash}</button>`);
+      actions.push(`<button class="btn btn-subtle btn-sm" data-act="retry" data-id="${escapeHtml(j.id)}" type="button">${ICONS.retry}<span>إعادة</span></button>`);
+      actions.push(`<button class="icon-btn sm danger" data-act="delete" data-id="${escapeHtml(j.id)}" type="button" title="حذف">${ICONS.trash}</button>`);
     } else if (statusKey === "done") {
-      actions.push(`<button class="btn btn-sm" data-act="preview" data-id="${escapeHtml(j.id)}">${ICONS.doc}<span>معاينة</span></button>`);
-      actions.push(`<button class="btn btn-ghost btn-icon" data-act="retry" data-id="${escapeHtml(j.id)}" title="إعادة التفريغ">${ICONS.retry}</button>`);
-      actions.push(`<button class="btn btn-danger-ghost btn-icon" data-act="delete" data-id="${escapeHtml(j.id)}" title="حذف من القائمة">${ICONS.trash}</button>`);
+      actions.push(`<button class="btn btn-subtle btn-sm" data-act="preview" data-id="${escapeHtml(j.id)}" type="button">${ICONS.book}<span>قراءة</span></button>`);
+      actions.push(`<button class="icon-btn sm" data-act="retry" data-id="${escapeHtml(j.id)}" type="button" title="إعادة التفريغ">${ICONS.retry}</button>`);
+      actions.push(`<button class="icon-btn sm danger" data-act="delete" data-id="${escapeHtml(j.id)}" type="button" title="حذف">${ICONS.trash}</button>`);
     }
 
-    const displayTitle = String(j.title || j.url || j.id).replace(/\.(mp4|mkv|webm|m4a|mp3|wav|ogg|mov|avi)$/i, "");
-    const titleHtml = j.url
-      ? `<a class="job-title" href="${escapeHtml(j.url)}" target="_blank" rel="noopener noreferrer" title="${escapeHtml(displayTitle)}">${escapeHtml(displayTitle)}</a>`
-      : `<span class="job-title" title="${escapeHtml(displayTitle)}">${escapeHtml(displayTitle)}</span>`;
+    const metrics = [];
+    if (isActive) {
+      const spd = formatSpeed(j.speed_bps);
+      const dl = j.bytes_downloaded > 0
+        ? (j.total_bytes > 0 ? `${formatBytes(j.bytes_downloaded)} / ${formatBytes(j.total_bytes)}` : formatBytes(j.bytes_downloaded))
+        : "";
+      const eta = formatEta(j.eta_seconds);
+      if (spd) metrics.push(`<span class="ltr mono">${escapeHtml(spd)}</span>`);
+      if (dl) metrics.push(`<span class="ltr mono">${escapeHtml(dl)}</span>`);
+      if (eta) metrics.push(`<span>متبقي <span class="ltr mono">${escapeHtml(eta)}</span></span>`);
+    }
+    if (j.retries > 0 && statusKey !== "done") {
+      metrics.push(`<span>محاولات: <span class="mono">${j.retries}</span></span>`);
+    }
+
+    const showPct = isActive || statusKey === "paused";
 
     return `
-      <article class="job-row status-${escapeHtml(statusKey)}" data-job-id="${escapeHtml(j.id)}">
-        <div class="job-head">
-          <div class="job-identity">
-            ${seqStr ? `<span class="job-seq mono">${seqStr}</span>` : ""}
-            ${sourceBadge}
-            ${titleHtml}
-            ${state.courseFilter === "all" && courseName ? `<span class="job-course-tag">${escapeHtml(courseName)}</span>` : ""}
+      <article class="job-row" data-job-id="${escapeHtml(j.id)}">
+        <div class="job-main">
+          <div class="job-info">
+            <div class="job-title-line">
+              ${titleEl}
+              <span class="source-tag ltr">${sourceLabel}</span>
+            </div>
+            ${subParts.length ? `<div class="job-subline">${subParts.join('<span class="meta-sep">·</span>')}</div>` : ""}
           </div>
-          <div class="job-status-wrap">
-            <span class="stage-label stage-${stInfo.cls}">
+
+          <div class="job-end">
+            <span class="stage-label is-${stInfo.kind}">
               <span class="stage-dot"></span>
               <span>${escapeHtml(stInfo.label)}</span>
+              ${showPct ? `<span class="stage-pct mono ltr">${pct.toFixed(0)}%</span>` : ""}
             </span>
-            <span class="job-pct ltr mono">${pct.toFixed(0)}%</span>
+            <div class="job-actions">${actions.join("")}</div>
           </div>
         </div>
 
-        <div class="progress-track">
-          <div class="progress-fill ${fillCls}" style="width:${pct.toFixed(1)}%"></div>
-        </div>
-
-        <div class="job-foot">
-          <div class="job-metrics">${metricsHtml}</div>
-          <div class="job-actions">${actions.join("")}</div>
-        </div>
+        ${showProgress ? `
+          <div class="job-progress-wrap">
+            <div class="progress-track">
+              <div class="progress-fill ${fillCls}" style="width:${pct.toFixed(1)}%"></div>
+            </div>
+            ${metrics.length ? `<div class="job-metrics">${metrics.join('<span class="meta-sep">·</span>')}</div>` : ""}
+          </div>
+        ` : ""}
 
         ${j.error_message ? `<div class="job-error">${ICONS.alert}<span>${escapeHtml(j.error_message)}</span></div>` : ""}
       </article>
     `;
   }
 
-  // State sync
+  // State Sync & SSE
   async function loadState() {
     try {
       const data = await api("/api/state");
@@ -1708,9 +2652,9 @@
       for (const j of (data.jobs || [])) {
         state.jobsById.set(j.id, j);
       }
-      renderHeader();
-      renderCourseControls();
-      renderStatsAndJobs();
+      renderHeaderAndControls();
+      renderCourses();
+      renderStatsAndQueue();
     } catch (err) {
       toast(`تعذر جلب الحالة: ${err.message}`, "err");
     }
@@ -1722,9 +2666,9 @@
     renderScheduled = true;
     requestAnimationFrame(() => {
       renderScheduled = false;
-      renderHeader();
-      renderCourseControls();
-      renderStatsAndJobs();
+      renderHeaderAndControls();
+      renderCourses();
+      renderStatsAndQueue();
     });
   }
 
@@ -1797,31 +2741,92 @@
 
   function connectSSE() {
     const es = new EventSource("/api/events");
-    es.onopen = () => { $("sseBadge").style.display = "none"; };
+    es.onopen = () => {
+      state.sseDisconnected = false;
+      renderHeaderAndControls();
+    };
     es.onmessage = (e) => {
       if (!e.data) return;
       try { handleEvent(JSON.parse(e.data)); } catch {}
     };
-    es.onerror = () => { $("sseBadge").style.display = "inline-flex"; };
+    es.onerror = () => {
+      state.sseDisconnected = true;
+      renderHeaderAndControls();
+    };
   }
 
-  // Modals
+  // Modals & Reader Sheet Controls
   function openModal(id) { $(id).classList.add("open"); }
   function closeModal(id) { $(id).classList.remove("open"); }
 
   document.querySelectorAll("[data-close]").forEach((btn) => {
     btn.addEventListener("click", () => closeModal(btn.dataset.close));
   });
-  document.querySelectorAll(".modal-backdrop").forEach((bg) => {
+  document.querySelectorAll(".modal-backdrop, .sheet-backdrop").forEach((bg) => {
     bg.addEventListener("click", (e) => { if (e.target === bg) bg.classList.remove("open"); });
   });
+
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
-      document.querySelectorAll(".modal-backdrop.open").forEach((m) => m.classList.remove("open"));
+      document.querySelectorAll(".modal-backdrop.open, .sheet-backdrop.open").forEach((m) => m.classList.remove("open"));
+      $("logPanel").classList.remove("open");
+      $("toggleLogsBtn").setAttribute("aria-expanded", "false");
     }
   });
 
-  // Settings
+  // Footer Logs Toggle
+  $("toggleLogsBtn").addEventListener("click", () => {
+    const open = $("logPanel").classList.toggle("open");
+    $("toggleLogsBtn").setAttribute("aria-expanded", String(open));
+  });
+  $("clearLogsBtn").addEventListener("click", () => {
+    state.logs = [];
+    renderLogs();
+  });
+
+  // Quick Download Mode + Keep Audio Actions (synced between Top Bar & Bento Widget)
+  async function updateDownloadMode(mode) {
+    try {
+      const res = await api("/api/settings", {
+        method: "POST",
+        body: JSON.stringify({ download_mode: mode })
+      });
+      if (res.config) state.config = res.config;
+      renderHeaderAndControls();
+      toast(`تم التبديل إلى وضع ${(MODE_META[mode] && MODE_META[mode].name) || mode}`);
+    } catch (err) {
+      renderHeaderAndControls();
+      toast(`تعذر تغيير الوضع: ${err.message}`, "err");
+    }
+  }
+
+  $("quickModeSelect").addEventListener("change", (e) => updateDownloadMode(e.target.value));
+
+  document.querySelectorAll(".saver-btn[data-mode]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const mode = btn.dataset.mode;
+      if ((state.config && state.config.download_mode) === mode) return;
+      updateDownloadMode(mode);
+    });
+  });
+
+  $("quickKeepAudio").addEventListener("change", async (e) => {
+    const keep_audio = Boolean(e.target.checked);
+    try {
+      const res = await api("/api/settings", {
+        method: "POST",
+        body: JSON.stringify({ keep_audio })
+      });
+      if (res.config) state.config = res.config;
+      renderHeaderAndControls();
+      toast(keep_audio ? "تم تفعيل الاحتفاظ بملفات MP3" : "تم تعطيل حفظ ملفات MP3");
+    } catch (err) {
+      renderHeaderAndControls();
+      toast(`تعذر التحديث: ${err.message}`, "err");
+    }
+  });
+
+  // Settings Modal
   function openSettings() {
     const c = state.config || {};
     $("cfgApiKey").value = "";
@@ -1839,23 +2844,7 @@
 
   $("openSettingsBtn").addEventListener("click", openSettings);
   $("bannerSettingsBtn").addEventListener("click", openSettings);
-
-  $("quickModeSelect").addEventListener("change", async (e) => {
-    const mode = e.target.value;
-    try {
-      const res = await api("/api/settings", {
-        method: "POST",
-        body: JSON.stringify({ download_mode: mode })
-      });
-      if (res.config) state.config = res.config;
-      renderHeader();
-      const names = { eco: "Eco", balanced: "Balanced", strict_audio: "Strict Audio" };
-      toast(`تم التبديل إلى وضع ${names[mode] || mode}`, "ok");
-    } catch (err) {
-      renderHeader();
-      toast(`تعذر تغيير الوضع: ${err.message}`, "err");
-    }
-  });
+  $("activeModelChip").addEventListener("click", openSettings);
 
   $("settingsForm").addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -1876,15 +2865,15 @@
     try {
       const res = await api("/api/settings", { method: "POST", body: JSON.stringify(payload) });
       if (res.config) state.config = res.config;
-      renderHeader();
+      renderHeaderAndControls();
       closeModal("settingsModal");
-      toast("تم حفظ الإعدادات", "ok");
+      toast("تم حفظ الإعدادات");
     } catch (err) {
       toast(`خطأ في حفظ الإعدادات: ${err.message}`, "err");
     }
   });
 
-  // Enqueue form
+  // Enqueue Form
   $("enqueueForm").addEventListener("submit", async (e) => {
     e.preventDefault();
     const course_name = $("courseInput").value.trim();
@@ -1892,8 +2881,9 @@
     if (!course_name || !urls_text) return;
 
     const btn = $("enqueueBtn");
+    const originalHtml = btn.innerHTML;
     btn.disabled = true;
-    btn.textContent = "جاري تحليل الروابط...";
+    btn.textContent = "جاري التحليل...";
     try {
       const res = await api("/api/enqueue", {
         method: "POST",
@@ -1902,7 +2892,7 @@
       const added = res.added ?? (res.jobs ? res.jobs.length : 0);
       const skipped = res.skipped ?? 0;
       const errors = res.errors ? res.errors.length : 0;
-      toast(`تمت إضافة ${added} محاضرة (تخطي ${skipped}${errors ? ` · أخطاء ${errors}` : ""})`, added > 0 ? "ok" : "warn");
+      toast(`تمت إضافة ${added} محاضرة${skipped ? ` · تخطي ${skipped}` : ""}${errors ? ` · أخطاء ${errors}` : ""}`, added > 0 ? "info" : "warn");
       $("urlsInput").value = "";
       updateUrlCounter();
       await loadState();
@@ -1910,26 +2900,43 @@
       toast(`تعذر إضافة الروابط: ${err.message}`, "err");
     } finally {
       btn.disabled = false;
-      btn.textContent = "إضافة وبدء التفريغ";
+      btn.innerHTML = originalHtml;
     }
   });
 
-  // Filters
-  $("courseFilter").addEventListener("change", (e) => {
-    state.courseFilter = e.target.value;
-    renderStatsAndJobs();
+  // Courses Strip & Filters
+  $("coursesStrip").addEventListener("click", (e) => {
+    const btn = e.target.closest("button[data-course-id]");
+    if (!btn) return;
+    state.courseFilter = btn.dataset.courseId;
+    $("courseFilter").value = state.courseFilter;
+    if (state.courseFilter !== "all" && !$("courseInput").value.trim()) {
+      $("courseInput").value = courseNameById(state.courseFilter);
+    }
+    renderCourses();
+    renderStatsAndQueue();
   });
 
-  document.querySelectorAll(".chip[data-status]").forEach((chip) => {
-    chip.addEventListener("click", () => {
-      document.querySelectorAll(".chip[data-status]").forEach((c) => c.classList.remove("active"));
-      chip.classList.add("active");
-      state.statusFilter = chip.dataset.status;
-      renderStatsAndJobs();
+  $("courseFilter").addEventListener("change", (e) => {
+    state.courseFilter = e.target.value;
+    renderCourses();
+    renderStatsAndQueue();
+  });
+
+  document.querySelectorAll(".tab-btn[data-status]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".tab-btn[data-status]").forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+      state.statusFilter = btn.dataset.status;
+      renderStatsAndQueue();
     });
   });
 
-  // Bulk actions
+  $("queueSearch").addEventListener("input", (e) => {
+    state.searchQuery = e.target.value;
+    renderStatsAndQueue();
+  });
+
   $("pauseAllBtn").addEventListener("click", async () => {
     try {
       await api("/api/pause_all", { method: "POST", body: "{}" });
@@ -1941,7 +2948,7 @@
   $("resumeAllBtn").addEventListener("click", async () => {
     try {
       await api("/api/resume_all", { method: "POST", body: "{}" });
-      toast("تم استئناف المهام", "ok");
+      toast("تم استئناف المهام");
       await loadState();
     } catch (err) { toast(err.message, "err"); }
   });
@@ -1953,7 +2960,7 @@
     } catch (err) { toast(`تعذر فتح المجلد: ${err.message}`, "err"); }
   });
 
-  // Job row actions
+  // Job Row Actions
   $("jobsList").addEventListener("click", async (e) => {
     const btn = e.target.closest("button[data-act]");
     if (!btn) return;
@@ -1972,7 +2979,8 @@
       } else if (act === "delete") {
         await api(`/api/jobs/${encodeURIComponent(id)}`, { method: "DELETE" });
         state.jobsById.delete(id);
-        renderStatsAndJobs();
+        renderCourses();
+        renderStatsAndQueue();
       } else if (act === "preview") {
         await openTranscriptPreview(id);
       }
@@ -1981,28 +2989,60 @@
     }
   });
 
-  // Transcript preview & inline search
+  // Transcript Reader Sheet
+  function applyReaderFontSize() {
+    $("transcriptContent").style.setProperty("--reader-font-size", `${state.readerFontSize}px`);
+  }
+  $("fontIncBtn").addEventListener("click", () => {
+    state.readerFontSize = Math.min(22, state.readerFontSize + 1.5);
+    applyReaderFontSize();
+  });
+  $("fontDecBtn").addEventListener("click", () => {
+    state.readerFontSize = Math.max(13, state.readerFontSize - 1.5);
+    applyReaderFontSize();
+  });
+
   function renderTranscriptBody() {
     const el = $("transcriptContent");
     const raw = state.currentTranscript.content || "";
     const q = (state.currentTranscript.query || "").trim();
+    const matchBadge = $("searchMatchCount");
+
+    const words = raw.trim() ? raw.trim().split(/\s+/).length : 0;
+    $("transcriptStats").textContent = words > 0 ? `${words.toLocaleString("ar-EG")} كلمة` : "قارئ التفريغ النصي";
+
     if (state.currentTranscript.rawMode) {
-      el.classList.add("mono");
+      el.classList.add("mono", "is-raw");
       el.textContent = raw;
-      $("toggleRawBtn").textContent = "القراءة المنسقة";
+      $("toggleRawBtn").textContent = "عرض القراءة";
+      matchBadge.textContent = "";
       return;
     }
-    el.classList.remove("mono");
-    $("toggleRawBtn").textContent = "Markdown الخام";
+    el.classList.remove("mono", "is-raw");
+    $("toggleRawBtn").textContent = "Markdown خام";
+
     let html = escapeHtml(raw)
       .replace(/^### (.+)$/gm, "<h3>$1</h3>")
       .replace(/^## (.+)$/gm, "<h2>$1</h2>")
       .replace(/^# (.+)$/gm, "<h1>$1</h1>")
+      .replace(/(<\/h[123]>)\n+/g, "$1")
       .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
-      .replace(/\[(\d{1,2}:\d{2}(?::\d{2})?)\]/g, '<span class="ts-badge">[$1]</span>');
+      .replace(/\[(\d{1,2}:\d{2}(?::\d{2})?)\]/g, '<span class="ts-chip">[$1]</span>');
+
     if (q.length >= 2) {
       const safeQ = escapeHtml(q).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-      html = html.replace(new RegExp(`(${safeQ})`, "gi"), '<mark class="hl">$1</mark>');
+      const re = new RegExp(`(${safeQ})`, "gi");
+      let matches = 0;
+      html = html.split(/(<[^>]+>)/g).map((part) => {
+        if (part.startsWith("<")) return part;
+        return part.replace(re, (m) => {
+          matches++;
+          return `<mark class="hl">${m}</mark>`;
+        });
+      }).join("");
+      matchBadge.textContent = matches > 0 ? `${matches} نتيجة` : "لا نتائج";
+    } else {
+      matchBadge.textContent = "";
     }
     el.innerHTML = html;
   }
@@ -2014,10 +3054,11 @@
 
   async function openTranscriptPreview(jobId) {
     const job = state.jobsById.get(jobId);
-    const cleanTitle = String(job ? job.title : "معاينة التفريغ").replace(/\.(mp4|mkv|webm|m4a|mp3|wav|ogg)$/i, "");
+    const cleanTitle = cleanMediaTitle(job ? job.title : "معاينة التفريغ");
     $("transcriptTitle").textContent = cleanTitle;
     $("transcriptFilePath").textContent = (job && job.output_path) ? job.output_path : "";
     $("transcriptSearch").value = "";
+    $("searchMatchCount").textContent = "";
     $("transcriptContent").textContent = "جاري تحميل التفريغ...";
     openModal("transcriptModal");
     try {
@@ -2045,7 +3086,7 @@
     const text = state.currentTranscript.content || "";
     try {
       await navigator.clipboard.writeText(text);
-      toast("تم نسخ التفريغ", "ok");
+      toast("تم نسخ النص");
     } catch {
       const ta = document.createElement("textarea");
       ta.value = text;
@@ -2053,7 +3094,7 @@
       ta.select();
       document.execCommand("copy");
       ta.remove();
-      toast("تم نسخ التفريغ", "ok");
+      toast("تم نسخ النص");
     }
   });
 
@@ -2072,6 +3113,7 @@
   });
 
   // Boot
+  applyReaderFontSize();
   updateUrlCounter();
   loadState();
   connectSSE();
