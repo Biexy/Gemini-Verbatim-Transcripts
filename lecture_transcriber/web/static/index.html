@@ -1427,6 +1427,70 @@
     color: var(--ink-muted);
     vertical-align: 1px;
   }
+  .math-inline {
+    display: inline-block;
+    direction: ltr;
+    unicode-bidi: isolate;
+    font-family: "Cambria Math", "STIX Two Math", "Times New Roman", Georgia, serif;
+    font-size: 1.05em;
+    padding: 0 3px;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+  .math-block {
+    display: block;
+    direction: ltr;
+    unicode-bidi: isolate;
+    text-align: center;
+    font-family: "Cambria Math", "STIX Two Math", "Times New Roman", Georgia, serif;
+    font-size: 1.12em;
+    margin: 12px 0;
+    padding: 10px 16px;
+    border-radius: 10px;
+    background: var(--surface-subtle);
+    border: 1px solid var(--border-subtle);
+    color: var(--ink);
+    overflow-x: auto;
+    line-height: 1.7;
+  }
+  .math-frac {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    vertical-align: middle;
+    margin: 0 3px;
+    font-size: 0.88em;
+    line-height: 1.15;
+  }
+  .math-num {
+    padding: 0 4px 1px;
+    border-bottom: 1px solid currentColor;
+    text-align: center;
+  }
+  .math-den {
+    padding: 1px 4px 0;
+    text-align: center;
+  }
+  .math-sqrt {
+    display: inline-flex;
+    align-items: baseline;
+  }
+  .math-sqrt-body {
+    border-top: 1px solid currentColor;
+    padding: 0 2px;
+    margin-left: 1px;
+  }
+  .math-bar { text-decoration: overline; }
+  .math-fn, .math-text {
+    font-family: var(--font-sans);
+    font-style: normal;
+    font-size: 0.92em;
+  }
+  .math-inline sup, .math-inline sub,
+  .math-block sup, .math-block sub {
+    font-size: 0.72em;
+    line-height: 0;
+  }
   mark.hl {
     background: var(--mark-bg);
     color: var(--mark-text);
@@ -3024,6 +3088,184 @@
     applyReaderFontSize();
   });
 
+  const LATEX_SYMBOLS = {
+    partial: "∂", infty: "∞", iint: "∬", iiint: "∭", oint: "∮", int: "∫",
+    sum: "∑", prod: "∏", nabla: "∇",
+    neq: "≠", ne: "≠", leq: "≤", le: "≤", geq: "≥", ge: "≥",
+    approx: "≈", equiv: "≡", sim: "∼", simeq: "≃", cong: "≅", propto: "∝",
+    pm: "±", mp: "∓", times: "×", cdot: "·", div: "÷", circ: "∘", ast: "∗", star: "⋆",
+    Rightarrow: "⇒", Leftarrow: "⇐", Leftrightarrow: "⇔", implies: "⇒", iff: "⇔",
+    rightarrow: "→", leftarrow: "←", leftrightarrow: "↔", to: "→", mapsto: "↦",
+    in: "∈", notin: "∉", subset: "⊂", subseteq: "⊆", supset: "⊃", supseteq: "⊇",
+    cup: "∪", cap: "∩", forall: "∀", exists: "∃", emptyset: "∅", varnothing: "∅",
+    ldots: "…", cdots: "⋯", dots: "…", therefore: "∴", because: "∵",
+    angle: "∠", degree: "°", prime: "′", perp: "⊥", parallel: "∥",
+    alpha: "α", beta: "β", gamma: "γ", delta: "δ", epsilon: "ε", varepsilon: "ε",
+    zeta: "ζ", eta: "η", theta: "θ", vartheta: "ϑ", iota: "ι", kappa: "κ",
+    lambda: "λ", mu: "μ", nu: "ν", xi: "ξ", pi: "π", varpi: "ϖ",
+    rho: "ρ", varrho: "ϱ", sigma: "σ", varsigma: "ς", tau: "τ", upsilon: "υ",
+    phi: "φ", varphi: "φ", chi: "χ", psi: "ψ", omega: "ω",
+    Gamma: "Γ", Delta: "Δ", Theta: "Θ", Lambda: "Λ", Xi: "Ξ",
+    Pi: "Π", Sigma: "Σ", Upsilon: "Υ", Phi: "Φ", Psi: "Ψ", Omega: "Ω",
+  };
+  const LATEX_FUNCS = new Set([
+    "sin", "cos", "tan", "cot", "sec", "csc", "arcsin", "arccos", "arctan",
+    "sinh", "cosh", "tanh", "ln", "log", "exp", "lim", "max", "min", "sup",
+    "inf", "det", "dim", "ker", "mod", "deg", "gcd", "sgn",
+  ]);
+  const LATEX_BB = { R: "ℝ", C: "ℂ", Z: "ℤ", N: "ℕ", Q: "ℚ", F: "𝔽" };
+
+  function readLatexArg(src, pos) {
+    let i = pos;
+    while (i < src.length && src[i] === " ") i++;
+    if (i >= src.length) return ["", i];
+    if (src[i] === "{") {
+      let depth = 0;
+      const start = i + 1;
+      for (let j = i; j < src.length; j++) {
+        if (src[j] === "\\" && j + 1 < src.length) { j++; continue; }
+        if (src[j] === "{") depth++;
+        else if (src[j] === "}") {
+          depth--;
+          if (depth === 0) return [src.slice(start, j), j + 1];
+        }
+      }
+      return [src.slice(start), src.length];
+    }
+    if (src[i] === "\\") {
+      const m = src.slice(i).match(/^\\[a-zA-Z]+|^\\./);
+      if (m) return [m[0], i + m[0].length];
+    }
+    return [src[i], i + 1];
+  }
+
+  function renderLatexExpr(expr) {
+    let out = "";
+    let i = 0;
+    const n = expr.length;
+    while (i < n) {
+      const ch = expr[i];
+      if (ch === "\\") {
+        const next = expr[i + 1] || "";
+        if (next === "\\") { out += "<br>"; i += 2; continue; }
+        if (next === "," || next === ";" || next === ":" || next === " ") { out += " "; i += 2; continue; }
+        if (next === "!") { i += 2; continue; }
+        if ("{}%_$#&".includes(next)) { out += next; i += 2; continue; }
+        const cmdMatch = expr.slice(i + 1).match(/^[a-zA-Z]+/);
+        if (!cmdMatch) { out += ch; i++; continue; }
+        const cmd = cmdMatch[0];
+        i += 1 + cmd.length;
+        if (cmd === "left" || cmd === "right" || cmd === "big" || cmd === "Big" ||
+            cmd === "bigg" || cmd === "Bigg" || cmd === "displaystyle" || cmd === "textstyle") {
+          continue;
+        }
+        if (cmd === "quad") { out += " &nbsp; "; continue; }
+        if (cmd === "qquad") { out += " &nbsp;&nbsp; "; continue; }
+        if (cmd === "frac" || cmd === "dfrac" || cmd === "tfrac") {
+          const [num, p1] = readLatexArg(expr, i);
+          const [den, p2] = readLatexArg(expr, p1);
+          i = p2;
+          out += `<span class="math-frac"><span class="math-num">${renderLatexExpr(num)}</span><span class="math-den">${renderLatexExpr(den)}</span></span>`;
+          continue;
+        }
+        if (cmd === "sqrt") {
+          let idxHtml = "";
+          if (expr[i] === "[") {
+            const closeIdx = expr.indexOf("]", i + 1);
+            if (closeIdx !== -1) {
+              idxHtml = `<sup>${renderLatexExpr(expr.slice(i + 1, closeIdx))}</sup>`;
+              i = closeIdx + 1;
+            }
+          }
+          const [body, p1] = readLatexArg(expr, i);
+          i = p1;
+          out += `<span class="math-sqrt">${idxHtml}√<span class="math-sqrt-body">${renderLatexExpr(body)}</span></span>`;
+          continue;
+        }
+        if (cmd === "text" || cmd === "mathrm" || cmd === "operatorname" || cmd === "rm") {
+          const [body, p1] = readLatexArg(expr, i);
+          i = p1;
+          out += `<span class="math-text">${body}</span>`;
+          continue;
+        }
+        if (cmd === "mathbf" || cmd === "textbf" || cmd === "boldsymbol") {
+          const [body, p1] = readLatexArg(expr, i);
+          i = p1;
+          out += `<strong>${renderLatexExpr(body)}</strong>`;
+          continue;
+        }
+        if (cmd === "mathbb") {
+          const [body, p1] = readLatexArg(expr, i);
+          i = p1;
+          out += LATEX_BB[body.trim()] || body;
+          continue;
+        }
+        if (cmd === "overline" || cmd === "bar") {
+          const [body, p1] = readLatexArg(expr, i);
+          i = p1;
+          out += `<span class="math-bar">${renderLatexExpr(body)}</span>`;
+          continue;
+        }
+        if (cmd === "hat" || cmd === "vec" || cmd === "tilde" || cmd === "dot") {
+          const [body, p1] = readLatexArg(expr, i);
+          i = p1;
+          const marks = { hat: "\u0302", vec: "\u20D7", tilde: "\u0303", dot: "\u0307" };
+          out += `${renderLatexExpr(body)}${marks[cmd]}`;
+          continue;
+        }
+        if (Object.prototype.hasOwnProperty.call(LATEX_SYMBOLS, cmd)) {
+          out += LATEX_SYMBOLS[cmd];
+          continue;
+        }
+        if (LATEX_FUNCS.has(cmd)) {
+          out += `<span class="math-fn">${cmd}</span>`;
+          continue;
+        }
+        out += cmd;
+        continue;
+      }
+      if (ch === "^") {
+        const [arg, p1] = readLatexArg(expr, i + 1);
+        i = p1;
+        out += `<sup>${renderLatexExpr(arg)}</sup>`;
+        continue;
+      }
+      if (ch === "_") {
+        const [arg, p1] = readLatexArg(expr, i + 1);
+        i = p1;
+        out += `<sub>${renderLatexExpr(arg)}</sub>`;
+        continue;
+      }
+      if (ch === "{" || ch === "}") {
+        i++;
+        continue;
+      }
+      out += ch;
+      i++;
+    }
+    return out;
+  }
+
+  function renderMathInHtml(html) {
+    // 1. Block display math: $$ ... $$ and \[ ... \]
+    html = html.replace(/\$\$([\s\S]+?)\$\$/g, (_, expr) =>
+      `<div class="math-block">${renderLatexExpr(expr.trim())}</div>`
+    );
+    html = html.replace(/\\\[([\s\S]+?)\\\]/g, (_, expr) =>
+      `<div class="math-block">${renderLatexExpr(expr.trim())}</div>`
+    );
+    // 2. Inline math: $ ... $ and \( ... \)
+    html = html.replace(/(^|[^\\])\$([^\$\n]+?)\$/g, (full, prefix, expr) => {
+      const trimmed = expr.trim();
+      if (!trimmed) return full;
+      return `${prefix}<span class="math-inline">${renderLatexExpr(trimmed)}</span>`;
+    });
+    html = html.replace(/\\\((.+?)\\\)/g, (_, expr) =>
+      `<span class="math-inline">${renderLatexExpr(expr.trim())}</span>`
+    );
+    return html;
+  }
+
   function renderTranscriptBody() {
     const el = $("transcriptContent");
     const raw = state.currentTranscript.content || "";
@@ -3050,6 +3292,7 @@
       .replace(/(<\/h[123]>)\n+/g, "$1")
       .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
       .replace(/\[(\d{1,2}:\d{2}(?::\d{2})?)\]/g, '<span class="ts-chip">[$1]</span>');
+    html = renderMathInHtml(html);
 
     if (q.length >= 2) {
       const safeQ = escapeHtml(q).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
