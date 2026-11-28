@@ -26,8 +26,10 @@ from typing import Any, Callable, Optional
 STATIC_DIR = Path(__file__).resolve().parent / "static"
 INDEX_HTML_PATH = STATIC_DIR / "index.html"
 
-_JOB_ACTION_RE = re.compile(r"^/api/jobs/([^/]+)/(pause|resume|retry|cancel|transcript)$")
+_JOB_ACTION_RE = re.compile(r"^/api/jobs/([^/]+)/(pause|resume|retry|cancel|transcript|download_video)$")
 _JOB_ITEM_RE = re.compile(r"^/api/jobs/([^/]+)$")
+_MEDIA_EXT_STRIP_RE = re.compile(r"\.(mp4|mkv|webm|mov|avi|m4v|m4a|mp3|wav|ogg)$", re.IGNORECASE)
+_VIDEO_EXTS = (".mp4", ".mkv", ".webm", ".mov", ".m4v")
 
 
 def mask_api_key(key: str) -> str:
@@ -161,7 +163,74 @@ class TranscriberHTTPServer(ThreadingHTTPServer):
         self.ffmpeg_status_fn = ffmpeg_status_fn or _default_ffmpeg_status
         self.shutdown_event = threading.Event()
         self._ffmpeg_cache: Optional[dict[str, Any]] = None
+        self._video_dl_lock = threading.Lock()
+        self._video_downloads: dict[str, dict[str, Any]] = {}
+        self._video_dl_sem = threading.Semaphore(2)
         super().__init__(server_address, handler_cls)
+
+    def _video_target_for_job(self, job: dict[str, Any], courses_by_id: dict[str, dict[str, Any]], cfg: Any) -> tuple[Path, str]:
+        from lecture_transcriber.config import clean_filename
+
+        course = courses_by_id.get(str(job.get("course_id") or ""))
+        course_dir = (course or {}).get("output_dir") or (
+            cfg.get("output_base_dir") if isinstance(cfg, dict) else getattr(cfg, "output_base_dir", "")
+        )
+        videos_dir = Path(course_dir or ".") / "Videos"
+        seq = int(job.get("seq_num") or 0)
+        raw_title = _MEDIA_EXT_STRIP_RE.sub("", str(job.get("title") or f"Lecture_{seq}").strip())
+        safe_title = clean_filename(raw_title or f"Lecture_{seq}", max_length=100)
+        stem = f"{seq:03d}_{safe_title}" if seq > 0 else safe_title
+        return videos_dir, stem
+
+    def get_video_downloads_snapshot(self, courses: list[dict[str, Any]], jobs: list[dict[str, Any]], cfg: Any) -> dict[str, dict[str, Any]]:
+        courses_by_id = {str(c.get("id") or ""): c for c in courses}
+        existing_by_dir: dict[Path, dict[str, Path]] = {}
+        for c in courses:
+            out_dir = c.get("output_dir")
+            if not out_dir:
+                continue
+            vdir = Path(out_dir) / "Videos"
+            if vdir.is_dir():
+                try:
+                    existing_by_dir[vdir] = {
+                        p.stem.lower(): p
+                        for p in vdir.iterdir()
+                        if p.is_file() and p.suffix.lower() in _VIDEO_EXTS and p.stat().st_size > 50_000
+                    }
+                except OSError:
+                    existing_by_dir[vdir] = {}
+
+        with self._video_dl_lock:
+            snap: dict[str, dict[str, Any]] = {k: dict(v) for k, v in self._video_downloads.items()}
+
+        for j in jobs:
+            jid = str(j.get("id") or "")
+            if not jid or jid in snap:
+                continue
+            vdir, stem = self._video_target_for_job(j, courses_by_id, cfg)
+            found = existing_by_dir.get(vdir, {}).get(stem.lower())
+            if found is not None:
+                try:
+                    size_bytes = found.stat().st_size
+                except OSError:
+                    size_bytes = 0
+                snap[jid] = {
+                    "job_id": jid,
+                    "status": "done",
+                    "progress": 100.0,
+                    "path": str(found),
+                    "filename": found.name,
+                    "size_bytes": size_bytes,
+                }
+        return snap
+
+    def emit_video_download_event(self, payload: dict[str, Any]) -> None:
+        emit_fn = getattr(self.engine, "_emit", None)
+        if callable(emit_fn):
+            try:
+                emit_fn("video_download", dict(payload))
+            except Exception:
+                pass
 
     def get_ffmpeg_status(self) -> dict[str, Any]:
         if self._ffmpeg_cache is None:
@@ -282,6 +351,7 @@ class TranscriberRequestHandler(BaseHTTPRequestHandler):
             "stats": stats,
             "online": self._get_online_status(),
             "ffmpeg": self.app_server.get_ffmpeg_status(),
+            "video_downloads": self.app_server.get_video_downloads_snapshot(courses, jobs, cfg),
         }
 
     # ---------- HTTP Verb Dispatch ----------
@@ -367,6 +437,9 @@ class TranscriberRequestHandler(BaseHTTPRequestHandler):
             action = match.group(2)
             if action in ("pause", "resume", "retry", "cancel"):
                 self._handle_job_action(job_id, action)
+                return
+            if action == "download_video":
+                self._handle_download_video(job_id, body)
                 return
 
         self._send_error_json("Endpoint not found", HTTPStatus.NOT_FOUND)
@@ -595,6 +668,193 @@ class TranscriberRequestHandler(BaseHTTPRequestHandler):
         except Exception as exc:
             self._send_error_json(str(exc), HTTPStatus.INTERNAL_SERVER_ERROR)
 
+    def _handle_download_video(self, job_id: str, body: dict[str, Any]) -> None:
+        db = self.app_server.db
+        job_raw = db.get_job(job_id) if hasattr(db, "get_job") else None
+        if not job_raw:
+            self._send_error_json("Job not found", HTTPStatus.NOT_FOUND)
+            return
+
+        job = _to_plain(job_raw)
+        url = str(job.get("url") or "").strip()
+        source_type = str(job.get("source_type") or "").strip().lower()
+        source_id = str(job.get("source_id") or job_id).strip()
+        if not url:
+            self._send_error_json("Job has no source URL", HTTPStatus.BAD_REQUEST)
+            return
+
+        cfg = self._get_config()
+        courses = _to_plain(db.list_courses()) if hasattr(db, "list_courses") else []
+        courses_by_id = {str(c.get("id") or ""): c for c in courses}
+        videos_dir, stem = self.app_server._video_target_for_job(job, courses_by_id, cfg)
+
+        # If already downloaded, optionally open Videos folder and return immediately
+        if videos_dir.is_dir():
+            for ext in _VIDEO_EXTS:
+                candidate = videos_dir / f"{stem}{ext}"
+                if candidate.is_file() and candidate.stat().st_size > 50_000:
+                    if body.get("open_if_exists", True):
+                        try:
+                            _open_folder_in_os(str(videos_dir))
+                        except Exception:
+                            pass
+                    entry = {
+                        "job_id": job_id,
+                        "status": "done",
+                        "progress": 100.0,
+                        "path": str(candidate),
+                        "filename": candidate.name,
+                        "size_bytes": candidate.stat().st_size,
+                    }
+                    with self.app_server._video_dl_lock:
+                        self.app_server._video_downloads[job_id] = entry
+                    self._send_json({"ok": True, "already_exists": True, "video": entry})
+                    return
+
+        with self.app_server._video_dl_lock:
+            existing_state = self.app_server._video_downloads.get(job_id)
+            if existing_state and existing_state.get("status") in ("queued", "downloading"):
+                self._send_json({"ok": True, "already_running": True, "video": dict(existing_state)})
+                return
+            init_state: dict[str, Any] = {
+                "job_id": job_id,
+                "status": "queued",
+                "progress": 0.0,
+                "speed_bps": 0.0,
+                "path": "",
+                "filename": f"{stem}.mp4",
+                "error": "",
+            }
+            self.app_server._video_downloads[job_id] = init_state
+
+        self.app_server.emit_video_download_event(init_state)
+
+        def _worker() -> None:
+            server_ref = self.app_server
+            last_emit = [0.0]
+
+            def _update(status: str, progress: float = 0.0, speed_bps: float = 0.0, path: str = "", filename: str = "", error: str = "", size_bytes: int = 0, force_emit: bool = False) -> None:
+                payload = {
+                    "job_id": job_id,
+                    "status": status,
+                    "progress": round(float(progress), 1),
+                    "speed_bps": float(speed_bps or 0.0),
+                    "path": path,
+                    "filename": filename or f"{stem}.mp4",
+                    "error": error,
+                    "size_bytes": int(size_bytes or 0),
+                }
+                with server_ref._video_dl_lock:
+                    server_ref._video_downloads[job_id] = payload
+                now = time.monotonic()
+                if force_emit or (now - last_emit[0] >= 0.45):
+                    last_emit[0] = now
+                    server_ref.emit_video_download_event(payload)
+
+            with server_ref._video_dl_sem:
+                if server_ref.shutdown_event.is_set():
+                    return
+                _update("downloading", 0.0, force_emit=True)
+                try:
+                    videos_dir.mkdir(parents=True, exist_ok=True)
+                    tmp_dir = videos_dir / "_tmp"
+                    tmp_dir.mkdir(parents=True, exist_ok=True)
+
+                    if source_type == "gdrive":
+                        from lecture_transcriber.config import AppConfig
+                        from lecture_transcriber.downloader.gdrive_dl import download_gdrive_file
+
+                        app_cfg = cfg if isinstance(cfg, AppConfig) else AppConfig()
+
+                        def _prog_cb(pct: float, spd: float, eta: Any, dl: int, tot: int) -> None:
+                            _update("downloading", pct, spd)
+
+                        dl_path = Path(
+                            download_gdrive_file(
+                                url=url,
+                                source_id=source_id,
+                                temp_dir=tmp_dir,
+                                config=app_cfg,
+                                progress_cb=_prog_cb,
+                                skip_transcoded=True,
+                            )
+                        )
+                        ext = dl_path.suffix.lower() if dl_path.suffix.lower() in _VIDEO_EXTS else ".mp4"
+                        final_path = videos_dir / f"{stem}{ext}"
+                        shutil.move(str(dl_path), str(final_path))
+                    else:
+                        import yt_dlp
+
+                        out_tmpl = str(tmp_dir / f"{stem}.%(ext)s")
+                        recorded = {"path": ""}
+
+                        def _yt_hook(d: dict[str, Any]) -> None:
+                            st = d.get("status")
+                            if st == "downloading":
+                                tot = float(d.get("total_bytes") or d.get("total_bytes_estimate") or 0)
+                                dl = float(d.get("downloaded_bytes") or 0)
+                                spd = float(d.get("speed") or 0)
+                                pct = min(99.0, (dl / tot) * 100.0) if tot > 0 else 0.0
+                                _update("downloading", pct, spd)
+                            elif st == "finished" and d.get("filename"):
+                                recorded["path"] = str(d["filename"])
+
+                        ydl_opts: dict[str, Any] = {
+                            "outtmpl": out_tmpl,
+                            "format": "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best",
+                            "merge_output_format": "mp4",
+                            "noplaylist": True,
+                            "quiet": True,
+                            "no_warnings": True,
+                            "continuedl": True,
+                            "progress_hooks": [_yt_hook],
+                        }
+                        proxy_val = cfg.get("proxy") if isinstance(cfg, dict) else getattr(cfg, "proxy", "")
+                        if proxy_val:
+                            ydl_opts["proxy"] = proxy_val
+
+                        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                            info = ydl.extract_info(url, download=True)
+                            if not recorded["path"] and isinstance(info, dict):
+                                req = info.get("requested_downloads") or []
+                                if req and isinstance(req[0], dict) and req[0].get("filepath"):
+                                    recorded["path"] = str(req[0]["filepath"])
+                                else:
+                                    recorded["path"] = ydl.prepare_filename(info)
+
+                        dl_path = Path(recorded["path"])
+                        if not dl_path.is_file():
+                            matches = [p for p in tmp_dir.glob(f"{stem}.*") if p.is_file() and not p.name.endswith(".part")]
+                            if not matches:
+                                raise FileNotFoundError("Downloaded video file not found")
+                            dl_path = max(matches, key=lambda p: p.stat().st_size)
+                        ext = dl_path.suffix.lower() if dl_path.suffix.lower() in _VIDEO_EXTS else ".mp4"
+                        final_path = videos_dir / f"{stem}{ext}"
+                        shutil.move(str(dl_path), str(final_path))
+
+                    try:
+                        if tmp_dir.is_dir() and not any(tmp_dir.iterdir()):
+                            tmp_dir.rmdir()
+                    except OSError:
+                        pass
+
+                    size_b = final_path.stat().st_size if final_path.is_file() else 0
+                    _update(
+                        "done",
+                        100.0,
+                        0.0,
+                        path=str(final_path),
+                        filename=final_path.name,
+                        size_bytes=size_b,
+                        force_emit=True,
+                    )
+                except Exception as exc:
+                    _update("error", 0.0, 0.0, error=str(exc), force_emit=True)
+
+        t = threading.Thread(target=_worker, name=f"video-dl-{job_id[:8]}", daemon=True)
+        t.start()
+        self._send_json({"ok": True, "started": True, "video": init_state})
+
     def _handle_open_folder(self, body: dict[str, Any]) -> None:
         cfg = self._get_config()
         base_dir = cfg.get("output_base_dir") if isinstance(cfg, dict) else getattr(cfg, "output_base_dir", "")
@@ -608,6 +868,12 @@ class TranscriberRequestHandler(BaseHTTPRequestHandler):
                 if c.get("id") == course_id and c.get("output_dir"):
                     target_dir = c["output_dir"]
                     break
+
+        subfolder = str(body.get("subfolder") or "").strip()
+        if subfolder and target_dir and subfolder in ("Videos",):
+            sub_path = os.path.join(target_dir, subfolder)
+            if os.path.isdir(sub_path):
+                target_dir = sub_path
 
         if not target_dir:
             self._send_error_json("Output folder is not configured", HTTPStatus.BAD_REQUEST)

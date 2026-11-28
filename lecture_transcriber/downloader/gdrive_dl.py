@@ -759,6 +759,7 @@ def download_gdrive_file(
     cancel_event: threading.Event | None = None,
     pause_event: threading.Event | None = None,
     on_status: Callable[..., Any] | None = None,
+    skip_transcoded: bool = False,
 ) -> str:
     """Download a public/shared Google Drive file of any size with HTTP Range resume.
 
@@ -778,20 +779,21 @@ def download_gdrive_file(
     part_path = out_dir / f"{safe_id}.gdrive.part"
 
     # Smart bandwidth saver: try Google's lightweight transcoded stream via yt-dlp on real Drive URLs
-    transcoded_path = _try_gdrive_transcoded_download(
-        url=url,
-        source_id=source_id,
-        out_dir=out_dir,
-        safe_id=safe_id,
-        part_path=part_path,
-        cfg=cfg,
-        progress_cb=progress_cb,
-        cancel_event=cancel_event,
-        pause_event=pause_event,
-        on_status=on_status,
-    )
-    if transcoded_path is not None:
-        return transcoded_path
+    if not skip_transcoded:
+        transcoded_path = _try_gdrive_transcoded_download(
+            url=url,
+            source_id=source_id,
+            out_dir=out_dir,
+            safe_id=safe_id,
+            part_path=part_path,
+            cfg=cfg,
+            progress_cb=progress_cb,
+            cancel_event=cancel_event,
+            pause_event=pause_event,
+            on_status=on_status,
+        )
+        if transcoded_path is not None:
+            return transcoded_path
 
     session = requests.Session()
     session.headers.update(

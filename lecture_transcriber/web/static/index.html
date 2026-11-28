@@ -1498,6 +1498,21 @@
     padding: 0 2px;
   }
 
+  .icon-btn.video-saved {
+    color: var(--ok);
+    border-color: color-mix(in srgb, var(--ok) 35%, var(--border));
+    background: color-mix(in srgb, var(--ok) 8%, transparent);
+  }
+  .btn-video-prog {
+    font-size: 11px;
+    padding: 0 8px;
+    height: 28px;
+    gap: 5px;
+    color: var(--accent);
+    border-color: color-mix(in srgb, var(--accent) 35%, var(--border));
+    background: color-mix(in srgb, var(--accent) 8%, transparent);
+  }
+
   /* =========================================================
      CLEAN SETTINGS MODAL
   ========================================================= */
@@ -2181,6 +2196,7 @@
     statusFilter: "all",
     searchQuery: "",
     logs: [],
+    videoDownloads: {},
     readerFontSize: 16,
     currentTranscript: { title: "", filename: "transcript.md", content: "", rawMode: false, query: "" }
   };
@@ -2214,7 +2230,8 @@
     book: '<svg class="svg-ico xs" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>',
     alert: '<svg class="svg-ico xs" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5"/><path d="M12 8v4M12 16h.01"/></svg>',
     ext: '<svg class="svg-ico xs" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>',
-    folder: '<svg class="svg-ico xs" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>'
+    folder: '<svg class="svg-ico xs" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>',
+    video: '<svg class="svg-ico xs" viewBox="0 0 24 24"><rect x="2" y="5" width="14" height="14" rx="2"/><polygon points="22 7 16 12 22 17 22 7"/></svg>'
   };
 
   const $ = (id) => document.getElementById(id);
@@ -2636,18 +2653,37 @@
       subParts.push(`<a class="job-ext-link" href="${escapeHtml(j.url)}" target="_blank" rel="noopener noreferrer" title="فتح الرابط الأصلي">${ICONS.ext}</a>`);
     }
 
+    const vdl = state.videoDownloads[j.id] || null;
+    let videoBtn = "";
+    if (j.url) {
+      if (vdl && (vdl.status === "queued" || vdl.status === "downloading")) {
+        const vpct = Math.max(0, Math.min(100, Number(vdl.progress || 0)));
+        const label = vdl.status === "queued" ? "MP4..." : `MP4 ${vpct.toFixed(0)}%`;
+        videoBtn = `<button class="btn btn-subtle btn-sm btn-video-prog mono ltr" data-act="download_video" data-id="${escapeHtml(j.id)}" type="button" title="جاري تحميل الفيديو MP4">${ICONS.video}<span>${label}</span></button>`;
+      } else if (vdl && vdl.status === "done") {
+        const sizeLabel = vdl.size_bytes ? ` (${formatBytes(vdl.size_bytes)})` : "";
+        videoBtn = `<button class="icon-btn sm video-saved" data-act="download_video" data-id="${escapeHtml(j.id)}" type="button" title="الفيديو MP4 محفوظ${sizeLabel} — اضغط لفتح مجلد Videos">${ICONS.video}</button>`;
+      } else {
+        videoBtn = `<button class="icon-btn sm" data-act="download_video" data-id="${escapeHtml(j.id)}" type="button" title="تحميل الفيديو MP4">${ICONS.video}</button>`;
+      }
+    }
+
     const actions = [];
     if (isActive || statusKey === "queued") {
       actions.push(`<button class="btn btn-ghost btn-sm" data-act="pause" data-id="${escapeHtml(j.id)}" type="button" title="إيقاف مؤقت">${ICONS.pause}<span>إيقاف</span></button>`);
+      if (videoBtn) actions.push(videoBtn);
       actions.push(`<button class="icon-btn sm danger" data-act="cancel" data-id="${escapeHtml(j.id)}" type="button" title="إلغاء">${ICONS.cancel}</button>`);
     } else if (statusKey === "paused") {
       actions.push(`<button class="btn btn-subtle btn-sm" data-act="resume" data-id="${escapeHtml(j.id)}" type="button" title="استئناف">${ICONS.play}<span>استئناف</span></button>`);
+      if (videoBtn) actions.push(videoBtn);
       actions.push(`<button class="icon-btn sm danger" data-act="cancel" data-id="${escapeHtml(j.id)}" type="button" title="إلغاء">${ICONS.cancel}</button>`);
     } else if (statusKey === "failed" || statusKey === "cancelled") {
       actions.push(`<button class="btn btn-subtle btn-sm" data-act="retry" data-id="${escapeHtml(j.id)}" type="button">${ICONS.retry}<span>إعادة</span></button>`);
+      if (videoBtn) actions.push(videoBtn);
       actions.push(`<button class="icon-btn sm danger" data-act="delete" data-id="${escapeHtml(j.id)}" type="button" title="حذف">${ICONS.trash}</button>`);
     } else if (statusKey === "done") {
       actions.push(`<button class="btn btn-subtle btn-sm" data-act="preview" data-id="${escapeHtml(j.id)}" type="button">${ICONS.book}<span>قراءة</span></button>`);
+      if (videoBtn) actions.push(videoBtn);
       actions.push(`<button class="icon-btn sm" data-act="retry" data-id="${escapeHtml(j.id)}" type="button" title="إعادة التفريغ">${ICONS.retry}</button>`);
       actions.push(`<button class="icon-btn sm danger" data-act="delete" data-id="${escapeHtml(j.id)}" type="button" title="حذف">${ICONS.trash}</button>`);
     }
@@ -2712,6 +2748,7 @@
       state.courses = data.courses || [];
       state.online = data.online !== undefined ? Boolean(data.online) : true;
       state.ffmpeg = data.ffmpeg || { available: true };
+      state.videoDownloads = data.video_downloads || {};
       state.jobsById.clear();
       for (const j of (data.jobs || [])) {
         state.jobsById.set(j.id, j);
@@ -2785,6 +2822,24 @@
         const idx = state.courses.findIndex((c) => c.id === data.course.id);
         if (idx >= 0) state.courses[idx] = data.course;
         else state.courses.push(data.course);
+        scheduleRender();
+      }
+      return;
+    }
+
+    if (type === "video_download") {
+      const jid = data.job_id;
+      if (jid) {
+        const prev = state.videoDownloads[jid];
+        state.videoDownloads[jid] = data;
+        if (data.status === "done" && (!prev || prev.status !== "done")) {
+          const sz = data.size_bytes ? ` (${formatBytes(data.size_bytes)})` : "";
+          toast(`تم تحميل الفيديو: ${data.filename || "MP4"}${sz}`);
+          addLog(`تم حفظ الفيديو MP4: ${data.filename || jid}${sz}`, "info");
+        } else if (data.status === "error" && (!prev || prev.status !== "error")) {
+          toast(`فشل تحميل الفيديو: ${data.error || "خطأ غير معروف"}`, "err");
+          addLog(`فشل تحميل الفيديو (${data.filename || jid}): ${data.error || ""}`, "error");
+        }
         scheduleRender();
       }
       return;
@@ -3069,6 +3124,22 @@
         renderStatsAndQueue();
       } else if (act === "preview") {
         await openTranscriptPreview(id);
+      } else if (act === "download_video") {
+        const res = await api(`/api/jobs/${encodeURIComponent(id)}/download_video`, {
+          method: "POST",
+          body: JSON.stringify({ open_if_exists: true })
+        });
+        if (res.video) {
+          state.videoDownloads[id] = res.video;
+          scheduleRender();
+        }
+        if (res.already_exists) {
+          toast(`الفيديو محفوظ مسبقاً — تم فتح مجلد Videos`);
+        } else if (res.already_running) {
+          toast("جاري تحميل الفيديو بالفعل...");
+        } else {
+          toast("بدأ تحميل الفيديو MP4 في مجلد Videos");
+        }
       }
     } catch (err) {
       toast(`فشل الإجراء: ${err.message}`, "err");
